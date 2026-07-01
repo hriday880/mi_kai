@@ -1,0 +1,219 @@
+/* ───────────────────────────────────────────────
+   TheCraft.module.css – Expertise Section
+   ─────────────────────────────────────────────── */
+
+.section {
+  position: relative;
+  min-height: 100vh;
+  background-color: var(--color-void);
+  padding: 140px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+}
+
+/* ─── Header ─── */
+.header {
+  text-align: center;
+  margin-bottom: 80px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 300;
+  color: #d4af37;
+  letter-spacing: 0.08em;
+  margin: 0 0 16px 0;
+}
+
+.tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: 300;
+  font-style: italic;
+  color: #e8d5a3;
+  letter-spacing: 0.15em;
+  margin: 0;
+}
+
+.titleDivider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  margin: 32px auto 0;
+}
+
+/* ─── Items Row ─── */
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+}
+
+.itemWrapper {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+}
+
+.item {
+  flex: 1;
+  text-align: center;
+  padding: 40px 24px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Icon ─── */
+.iconWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.icon {
+  width: 56px;
+  height: 56px;
+}
+
+/* ─── Counter Display ─── */
+.counterDisplay {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.counterNumber {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem;
+  font-weight: 300;
+  color: #d4af37;
+  line-height: 1;
+}
+
+.counterLabel {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(212, 175, 55, 0.7);
+  letter-spacing: 0.1em;
+}
+
+/* ─── Item Title ─── */
+.itemTitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+  margin: 0 0 16px 0;
+}
+
+/* ─── Item Description ─── */
+.itemDesc {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: #f5f0e8;
+  margin: 0;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ─── Vertical Divider ─── */
+.verticalDivider {
+  width: 1px;
+  align-self: stretch;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(212, 175, 55, 0.3) 20%,
+    rgba(212, 175, 55, 0.5) 50%,
+    rgba(212, 175, 55, 0.3) 80%,
+    transparent
+  );
+  flex-shrink: 0;
+  margin: 40px 0;
+}
+
+/* ─── Revealed ─── */
+.revealed {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .section {
+    padding: 100px 32px;
+  }
+
+  .item {
+    padding: 32px 16px;
+  }
+
+  .icon {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 80px 24px;
+    min-height: auto;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .itemWrapper {
+    flex-direction: column;
+  }
+
+  .verticalDivider {
+    display: none;
+  }
+
+  .item {
+    padding: 36px 20px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+  }
+
+  .itemWrapper:last-child .item {
+    border-bottom: none;
+  }
+
+  .header {
+    margin-bottom: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 64px 20px;
+  }
+
+  .item {
+    padding: 28px 16px;
+  }
+}

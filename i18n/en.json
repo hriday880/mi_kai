@@ -1,0 +1,92 @@
+{
+  "brand": "Mi-KAI Tokyo",
+  "tagline": "Light, Perfected.",
+  "nav": {
+    "home": "Home",
+    "theHouse": "The House",
+    "theExperience": "The Experience",
+    "theCraft": "The Craft",
+    "theLiving": "The Living",
+    "contact": "Contact HQ"
+  },
+  "intro": {
+    "unveil": "Enter The House of Mi-KAI",
+    "subtitle": "Where Darkness Meets Design"
+  },
+  "theHouse": {
+    "title": "The House of Mi-KAI",
+    "tagline": "Where Precision Meets Radiance",
+    "p1": "Born in the heart of Tokyo, Mi-KAI is more than a brand — it is a philosophy of light. We believe that illumination is not merely functional; it is the silent architect of atmosphere, emotion, and well-being.",
+    "p2": "Every Mi-KAI creation is a testament to the Japanese principle of Monozukuri — the art of making things with meticulous care and unwavering dedication to perfection.",
+    "p3": "Our name, 光明 (Kōmyō), means radiance — the brilliant light that reveals true beauty in every surface, every texture, every moment."
+  },
+  "theExperience": {
+    "title": "Illuminate Your World",
+    "tagline": "Light That Lives With You",
+    "cri": {
+      "title": "True Color Rendering",
+      "subtitle": "CRI > 90",
+      "desc": "Experience colors as they were meant to be seen. Our CRI>90 LEDs render the full spectrum of visible light, revealing the true richness of your interiors."
+    },
+    "glareFree": {
+      "title": "Glare-Free Comfort",
+      "desc": "Engineered optics eliminate harsh glare while maintaining luminous output. Your eyes rest, even after hours."
+    },
+    "circadian": {
+      "title": "Circadian Harmony",
+      "desc": "Tunable color temperatures align with your body's natural rhythm — warm light for evenings, crisp light for focus."
+    },
+    "longevity": {
+      "title": "40,000 Hours",
+      "desc": "A decade of continuous brilliance. Our LEDs are engineered for endurance, maintaining color consistency throughout their lifespan."
+    }
+  },
+  "theCraft": {
+    "title": "Mastery in Every Detail",
+    "tagline": "Engineered Beyond Expectation",
+    "quality": {
+      "title": "Uncompromising Quality",
+      "desc": "Every unit undergoes rigorous testing across 12 quality checkpoints before it earns the Mi-KAI seal."
+    },
+    "cri": {
+      "title": "CRI>90 Standard",
+      "desc": "We don't meet industry standards — we redefine them. CRI>90 is our baseline, not our ceiling."
+    },
+    "service": {
+      "title": "White-Glove Service",
+      "desc": "From consultation to installation, our dedicated team ensures a seamless, premium experience at every touchpoint."
+    },
+    "systems": {
+      "title": "Intelligent Systems",
+      "desc": "Interior lighting, integrated systems, and sensors — engineered to work in perfect harmony with your space."
+    }
+  },
+  "theLiving": {
+    "title": "Curated Luminance",
+    "tagline": "Your Space, Elevated",
+    "desc": "Transform every room into a sanctuary of refined light. From intimate bedrooms to grand living spaces, Mi-KAI elevates the everyday into the extraordinary.",
+    "bedroom": "The Sanctuary",
+    "living": "The Statement",
+    "workspace": "The Focus"
+  },
+  "contact": {
+    "title": "Contact Headquarters",
+    "tagline": "We Are Listening",
+    "namePlaceholder": "Your Name",
+    "emailPlaceholder": "Your Email",
+    "subjectPlaceholder": "Subject",
+    "messagePlaceholder": "Your Message",
+    "send": "Send Message",
+    "success": "Message sent successfully. We will respond shortly.",
+    "hq": "Mi-KAI Tokyo Headquarters"
+  },
+  "footer": {
+    "copyright": "© 2026 Mi-KAI Tokyo. All rights reserved.",
+    "tagline": "Light, Perfected."
+  },
+  "lang": {
+    "en": "EN",
+    "jp": "JP",
+    "cn": "CN"
+  }
+}

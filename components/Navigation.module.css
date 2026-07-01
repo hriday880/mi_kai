@@ -1,0 +1,360 @@
+/* ───────────────────────────────────────────────
+   Navigation.module.css – Floating Glass Nav
+   ─────────────────────────────────────────────── */
+
+/* ─── Nav Shell ─── */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    backdrop-filter 0.4s ease;
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ─── Inner Container ─── */
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+  height: 72px;
+}
+
+/* ─── Logo ─── */
+.logoLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.logoLink:hover .logo {
+  filter: brightness(1.3) drop-shadow(0 0 6px rgba(212, 175, 55, 0.5));
+  transform: scale(1.03);
+}
+
+/* ─── Desktop Links ─── */
+.links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navLink {
+  position: relative;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 8px 0;
+  transition: color 0.3s ease;
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, #d4af37, #e8d5a3);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navLink:hover {
+  color: #d4af37;
+}
+
+.navLink:hover::after {
+  width: 100%;
+}
+
+/* ─── Right Section ─── */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* ─── Language Switcher ─── */
+.langSwitcher {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.langBtn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  padding: 4px 6px;
+  transition: color 0.3s ease;
+}
+
+.langBtn:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.langActive {
+  color: #d4af37 !important;
+}
+
+.langDivider {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.7rem;
+  margin: 0 2px;
+  user-select: none;
+}
+
+/* ─── Contact Button ─── */
+.contactBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 20px;
+  border: 1px solid rgba(212, 175, 55, 0.6);
+  border-radius: 2px;
+  color: #d4af37;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.4s ease;
+  background: transparent;
+}
+
+.contactBtn:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: #d4af37;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+/* ─── Hamburger ─── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1100;
+}
+
+.bar {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center;
+}
+
+.hamburgerOpen .bar:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+}
+
+.hamburgerOpen .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburgerOpen .bar:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+}
+
+/* ─── Gold Accent Line ─── */
+.accentLine {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 175, 55, 0.4) 20%,
+    #d4af37 50%,
+    rgba(212, 175, 55, 0.4) 80%,
+    transparent
+  );
+}
+
+/* ─── Overlay ─── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.overlayVisible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ─── Mobile Drawer ─── */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 320px;
+  max-width: 85vw;
+  height: 100vh;
+  background: rgba(15, 15, 15, 0.97);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  z-index: 999;
+  transform: translateX(100%);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 40px;
+  border-left: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.drawerOpen {
+  transform: translateX(0);
+}
+
+.drawerLinks {
+  list-style: none;
+  margin: 0 0 40px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drawerLink {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 12px 0;
+  text-align: left;
+  transition: color 0.3s ease, padding-left 0.3s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.drawerLink:hover {
+  color: #d4af37;
+  padding-left: 8px;
+}
+
+.drawerLang {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 32px;
+}
+
+.drawerContact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  border: 1px solid rgba(212, 175, 55, 0.6);
+  border-radius: 2px;
+  color: #d4af37;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.4s ease;
+  background: transparent;
+}
+
+.drawerContact:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: #d4af37;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .inner {
+    padding: 0 24px;
+  }
+
+  .links {
+    gap: 24px;
+  }
+
+  .navLink {
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .inner {
+    padding: 0 20px;
+    height: 64px;
+  }
+
+  .links {
+    display: none;
+  }
+
+  .langSwitcher {
+    display: none;
+  }
+
+  .contactBtn {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .logo {
+    height: 26px;
+  }
+}

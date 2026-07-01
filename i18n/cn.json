@@ -1,0 +1,92 @@
+{
+  "brand": "Mi-KAI Tokyo",
+  "tagline": "光，至臻。",
+  "nav": {
+    "home": "首页",
+    "theHouse": "光之馆",
+    "theExperience": "光的体验",
+    "theCraft": "匠心工艺",
+    "theLiving": "光的生活美学",
+    "contact": "联系总部"
+  },
+  "intro": {
+    "unveil": "Enter The House of Mi-KAI",
+    "subtitle": "Where Darkness Meets Design"
+  },
+  "theHouse": {
+    "title": "光之馆",
+    "tagline": "精密与光辉的交汇",
+    "p1": "诞生于东京之心，Mi-KAI不仅是一个品牌——它是一种光的哲学。我们相信，照明不仅仅是功能性的；它是氛围、情感和幸福的无声建筑师。",
+    "p2": "Mi-KAI的每一件作品都是日本\"物造\"精神的见证——以一丝不苟的关注和对完美的坚定奉献来制造事物的艺术。",
+    "p3": "我们的名字「光明」(Kōmyō)意为辉煌——那道在每一个表面、每一种质感、每一个瞬间中揭示真正美丽的璀璨之光。"
+  },
+  "theExperience": {
+    "title": "光的体验",
+    "tagline": "与你同在的光",
+    "cri": {
+      "title": "真实色彩还原",
+      "subtitle": "CRI > 90",
+      "desc": "体验色彩本来的面貌。我们CRI>90的LED还原全光谱可见光，揭示室内装饰的真实丰富感。"
+    },
+    "glareFree": {
+      "title": "无眩光舒适",
+      "desc": "精密光学设计消除刺眼眩光，同时保持光输出。即使数小时后，您的眼睛依然舒适。"
+    },
+    "circadian": {
+      "title": "昼夜节律和谐",
+      "desc": "可调色温与您身体的自然节律相协调——夜晚温暖柔光，专注时清冽明光。"
+    },
+    "longevity": {
+      "title": "40,000小时",
+      "desc": "十年持续璀璨。我们的LED专为耐久而设计，在整个使用寿命中保持色彩一致性。"
+    }
+  },
+  "theCraft": {
+    "title": "匠心工艺",
+    "tagline": "超越期待的工艺",
+    "quality": {
+      "title": "不妥协的品质",
+      "desc": "每个产品经过12个质量检查点的严格测试，方能获得Mi-KAI的认证。"
+    },
+    "cri": {
+      "title": "CRI>90 标准",
+      "desc": "我们不是满足行业标准——我们重新定义标准。CRI>90是我们的基线，而非上限。"
+    },
+    "service": {
+      "title": "白手套服务",
+      "desc": "从咨询到安装，我们的专业团队确保每一个接触点都是无缝、尊贵的体验。"
+    },
+    "systems": {
+      "title": "智能系统",
+      "desc": "室内照明、集成系统与传感器——精心设计，与您的空间完美协调。"
+    }
+  },
+  "theLiving": {
+    "title": "光的生活美学",
+    "tagline": "提升你的空间",
+    "desc": "将每一个房间转化为精致光线的圣殿。从私密卧室到宏大客厅，Mi-KAI将日常升华为非凡。",
+    "bedroom": "圣殿",
+    "living": "宣言",
+    "workspace": "聚焦"
+  },
+  "contact": {
+    "title": "联系总部",
+    "tagline": "我们在聆听",
+    "namePlaceholder": "您的姓名",
+    "emailPlaceholder": "您的邮箱",
+    "subjectPlaceholder": "主题",
+    "messagePlaceholder": "您的留言",
+    "send": "发送消息",
+    "success": "消息发送成功。我们将尽快回复。",
+    "hq": "Mi-KAI Tokyo 总部"
+  },
+  "footer": {
+    "copyright": "© 2026 Mi-KAI Tokyo. 版权所有。",
+    "tagline": "光，至臻。"
+  },
+  "lang": {
+    "en": "EN",
+    "jp": "JP",
+    "cn": "CN"
+  }
+}

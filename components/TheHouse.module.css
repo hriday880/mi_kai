@@ -1,0 +1,141 @@
+.section {
+  position: relative;
+  min-height: 100vh;
+  background-color: var(--color-void);
+  padding: 120px 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.kanjiWatermark {
+  position: absolute;
+  top: 40%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-jp);
+  font-size: clamp(15rem, 30vw, 35rem);
+  font-weight: 400;
+  color: rgba(212, 175, 55, 0.02);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  z-index: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--space-2xl);
+  position: relative;
+  z-index: 1;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4xl);
+  align-items: flex-start;
+}
+
+.titleColumn {
+  position: relative;
+}
+
+.stickyTitle {
+  position: sticky;
+  top: 150px;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  font-weight: 300;
+  color: var(--color-champagne);
+  letter-spacing: 0.05em;
+  margin: 0 0 var(--space-xl) 0;
+  line-height: 1.1;
+}
+
+.titleDivider {
+  width: 100px;
+  height: 1px;
+  background: var(--color-metallic);
+  margin-bottom: var(--space-xl);
+  opacity: 0.6;
+}
+
+.tagline {
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-shimmer);
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.textColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+  padding-top: var(--space-3xl);
+}
+
+.paragraph {
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--color-warm);
+  letter-spacing: 0.03em;
+  margin: 0;
+  padding-left: var(--space-xl);
+  border-left: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-2xl);
+  }
+
+  .textColumn {
+    padding-top: var(--space-lg);
+  }
+
+  .stickyTitle {
+    position: relative;
+    top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--space-xl);
+  }
+
+  .paragraph {
+    font-size: var(--text-base);
+    padding-left: var(--space-lg);
+  }
+
+  .kanjiWatermark {
+    font-size: 12rem;
+    left: 50%;
+  }
+}
