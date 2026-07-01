@@ -53,9 +53,17 @@ export default function IntroAnimation() {
       renderer.toneMappingExposure = 0.9;
 
       // ─ Scene & Camera
+      const getCameraZ = (width: number) => {
+        if (width >= 1024) return 5.5;
+        // On smaller screens, move camera back so the box appears smaller.
+        // E.g., at 375px width, z becomes ~8.5
+        const t = Math.max(0, (1024 - width) / (1024 - 375));
+        return 5.5 + t * 3.0;
+      };
+
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-      camera.position.set(0, 1.8, 5.5);
+      camera.position.set(0, 1.8, getCameraZ(window.innerWidth));
       camera.lookAt(0, 0, 0);
 
       // ─ Lighting
@@ -202,6 +210,9 @@ export default function IntroAnimation() {
         const w = window.innerWidth;
         const h = window.innerHeight;
         camera.aspect = w / h;
+        if (!sceneDataRef.current?.animating) {
+          camera.position.z = getCameraZ(w);
+        }
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
       };
