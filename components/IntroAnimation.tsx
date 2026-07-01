@@ -73,12 +73,13 @@ export default function IntroAnimation() {
       const W = 3.2;   // width  (16cm)
       const D = 3.2;   // depth  (16cm)
       const H = 1.2;   // height (6cm)
-      const T = 0.2;   // thickness (1cm)
+      const T = 0.1;   // thickness (0.5cm)
 
       // ─ Load textures
       const loader = new THREE.TextureLoader();
+      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
       const loadTex = (path: string) => {
-        const tex = loader.load(path);
+        const tex = loader.load(basePath + path);
         tex.colorSpace = THREE.SRGBColorSpace;
         return tex;
       };
