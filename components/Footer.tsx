@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useLanguage } from '@/lib/LanguageContext';
 import styles from './Footer.module.css';
+import logoGold from '@/public/logo-gold.svg';
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -18,7 +19,7 @@ export default function Footer() {
       <div className={styles.container}>
         <div className={styles.logoContainer} onClick={scrollToTop}>
           <Image 
-            src="/logo-gold.svg" 
+            src={logoGold} 
             alt="Mi-KAI Tokyo" 
             width={150} 
             height={50} 

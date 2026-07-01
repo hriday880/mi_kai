@@ -336,6 +336,24 @@
   .inner {
     padding: 0 20px;
     height: 64px;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .logoLink {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Ensure hover effect doesn't break centering */
+  .logoLink:hover .logo {
+    transform: scale(1.03);
+  }
+
+  .right {
+    margin-left: auto;
   }
 
   .links {
@@ -355,6 +373,8 @@
   }
 
   .logo {
-    height: 26px;
+    height: 28px;
+    width: auto;
+    object-fit: contain;
   }
 }

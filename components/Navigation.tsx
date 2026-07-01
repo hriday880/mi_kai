@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useLanguage, type Lang } from '@/lib/LanguageContext';
 import styles from './Navigation.module.css';
+import logoGold from '@/public/logo-gold.svg';
 
 export default function Navigation() {
   const { t, lang, setLang } = useLanguage();
@@ -75,7 +76,7 @@ export default function Navigation() {
           {/* Logo */}
           <Link href="/" className={styles.logoLink} aria-label="Mi-KAI Tokyo Home">
             <Image
-              src="/logo-gold.svg"
+              src={logoGold}
               alt="Mi-KAI Tokyo"
               width={120}
               height={40}

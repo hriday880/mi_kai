@@ -77,7 +77,11 @@ export default function IntroAnimation() {
       const T = 0.1;   // thickness (0.5cm)
 
       // ─ Load textures
-      const loader = new THREE.TextureLoader();
+      const manager = new THREE.LoadingManager();
+      manager.onLoad = () => {
+        setPhase('ready');
+      };
+      const loader = new THREE.TextureLoader(manager);
       const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
       const loadTex = (path: string) => {
         const tex = loader.load(basePath + path);
@@ -240,7 +244,7 @@ export default function IntroAnimation() {
         },
       };
 
-      setPhase('ready');
+      // setPhase('ready') is now handled by the LoadingManager
     };
 
     initScene();
