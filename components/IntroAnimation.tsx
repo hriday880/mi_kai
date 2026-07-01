@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useLanguage } from '@/lib/LanguageContext';
 import styles from './IntroAnimation.module.css';
+import type * as THREE from 'three';
 
 /*
  * THREE.JS 3D BOX — Intro Gate Animation
