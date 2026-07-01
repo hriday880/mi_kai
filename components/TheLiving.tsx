@@ -4,6 +4,10 @@ import { useEffect, useRef } from 'react';
 import { useLanguage } from '@/lib/LanguageContext';
 import styles from './TheLiving.module.css';
 
+import bedroomImg from '@/public/images/bedroom.png';
+import livingImg from '@/public/images/living.png';
+import workspaceImg from '@/public/images/workspace.png';
+
 export default function TheLiving() {
   const { t } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
@@ -39,7 +43,10 @@ export default function TheLiving() {
         <div className={styles.grid}>
           {/* Bedroom Card */}
           <div className={`${styles.card} ${styles.reveal}`}>
-            <div className={`${styles.imagePlaceholder} ${styles.imgBedroom}`}></div>
+            <div 
+              className={styles.imagePlaceholder} 
+              style={{ backgroundImage: `url(${bedroomImg.src}), linear-gradient(45deg, #1a1510, #2a2520)` }}
+            ></div>
             <div className={styles.cardContent}>
               <h3 className={styles.cardTitle}>{t('theLiving.bedroom')}</h3>
             </div>
@@ -48,7 +55,10 @@ export default function TheLiving() {
 
           {/* Living Room Card */}
           <div className={`${styles.card} ${styles.reveal}`} style={{ transitionDelay: '0.1s' }}>
-            <div className={`${styles.imagePlaceholder} ${styles.imgLiving}`}></div>
+            <div 
+              className={styles.imagePlaceholder} 
+              style={{ backgroundImage: `url(${livingImg.src}), linear-gradient(135deg, #0a0a0a, #1f1b13)` }}
+            ></div>
             <div className={styles.cardContent}>
               <h3 className={styles.cardTitle}>{t('theLiving.living')}</h3>
             </div>
@@ -57,7 +67,10 @@ export default function TheLiving() {
 
           {/* Workspace Card */}
           <div className={`${styles.card} ${styles.reveal}`} style={{ transitionDelay: '0.2s' }}>
-            <div className={`${styles.imagePlaceholder} ${styles.imgWorkspace}`}></div>
+            <div 
+              className={styles.imagePlaceholder} 
+              style={{ backgroundImage: `url(${workspaceImg.src}), linear-gradient(to bottom, #111111, #221d15)` }}
+            ></div>
             <div className={styles.cardContent}>
               <h3 className={styles.cardTitle}>{t('theLiving.workspace')}</h3>
             </div>

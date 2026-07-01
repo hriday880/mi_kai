@@ -106,7 +106,8 @@
 
 @media (max-width: 768px) {
   .switchContainer {
-    right: 14px;
+    right: auto;
+    left: 14px;
   }
   .thread {
     height: 60px;
