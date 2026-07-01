@@ -79,14 +79,17 @@
 
 /* ─── Icon ─── */
 .iconWrapper {
-  display: flex;
-  justify-content: center;
+  display: block;
+  text-align: center;
   margin-bottom: 24px;
+  width: 100%;
 }
 
 .icon {
   width: 56px;
   height: 56px;
+  display: block;
+  margin: 0 auto;
 }
 
 /* ─── Counter Display ─── */
@@ -96,6 +99,7 @@
   justify-content: center;
   gap: 4px;
   margin-bottom: 16px;
+  padding-left: 24px; /* Visually balances the small "CRI>" text so the "90" is centered under the diamond */
 }
 
 .counterNumber {
