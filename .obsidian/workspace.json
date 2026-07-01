@@ -178,6 +178,7 @@
   },
   "active": "48874848bc990eb7",
   "lastOpenFiles": [
+    "next.config.mjs",
     "data/messages.json",
     "data",
     "public/box/face_4.png",
@@ -194,7 +195,6 @@
     "node_modules/@types/three/examples/jsm/tsl/lighting/data/AmbientLightDataNode.d.ts",
     "node_modules/@types/three/examples/jsm/tsl/lighting/data/DirectionalLightDataNode.d.ts",
     "node_modules/@types/three/examples/jsm/tsl/shadows/TileShadowNode.d.ts",
-    "node_modules/@types/three/examples/jsm/tsl/shadows/TileShadowNodeHelper.d.ts",
     "node_modules/three/examples/jsm/libs/draco/README.md",
     "node_modules/three/examples/jsm/libs/basis/README.md",
     "node_modules/three/src/nodes/materialx/DISCLAIMER.md",

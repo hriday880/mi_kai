@@ -1,8 +1,7 @@
-import type { NextConfig } from "next";
-
+/** @type {import('next').NextConfig} */
 const basePath = process.env.NODE_ENV === 'production' ? '/mi_kai' : '';
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   output: 'export',
   images: {
     unoptimized: true,
