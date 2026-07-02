@@ -45,7 +45,7 @@ export default function ProductClient({ product }: { product: Product }) {
       <section className={styles.heroSection}>
         <div className={styles.imageWrapper}>
           <Image 
-            src={`/images/products/${product.id}-main.png`}
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/images/products/${product.id}-main.png`}
             alt={`Product ${product.id}`}
             fill
             className={styles.heroImage}
