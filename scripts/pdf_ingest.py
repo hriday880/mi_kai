@@ -53,5 +53,5 @@ if __name__ == "__main__":
     pdf_file = sys.argv[1]
     
     # Hardcoded based on user request:
-    # Page 55 to 91, starting at Product 028
-    extract_pdf_pages(pdf_file, 55, 91, 28)
+    # Page 58 to 92, starting at Product 028
+    extract_pdf_pages(pdf_file, 58, 92, 28)

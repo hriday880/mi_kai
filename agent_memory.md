@@ -15,6 +15,7 @@
   - [[memory/thinking/2026-07-01_planning_session]]
   - [[memory/thinking/2026-07-01_implementation_session]]
   - [[memory/thinking/2026-07-03_catalogue_extraction]]
+  - [[memory/thinking/2026-07-03_session_wrap_up]]
 
 ---
 
@@ -35,6 +36,8 @@
 ## 🗂️ Project Status
 
 - **Phase**: Website ~100% complete. Core features (3D Intro, i18n, sections) built.
-- **Catalogue Integration**: Fully automated machine-learning pipeline built (`rembg` + `easyocr`). Successfully ingested 45 premium products (images and spec data) from both image folders and PDF catalogues.
+- **Catalogue Integration**: Fully automated ML pipeline built (`rembg` + `easyocr`). 
+  - Fixed PDF index offset issue (H028 matched correctly to Page 58).
+  - Ingested 44 premium products (images and spec data).
 - **Localization**: Catalogue data (categories and finishes) mapped and dynamically localized into Japanese and Chinese.
 - **Last Updated**: 2026-07-03
