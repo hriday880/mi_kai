@@ -12,7 +12,7 @@ type Product = {
   category: string;
   finishes: { id: string; name: string; hex: string }[];
   specifications: { wattage: string; size: string; cutOut: string; beamAngle: string }[];
-  media: { video: string; thumbnail: string; technicalDrawing: string };
+  media: { video?: string; thumbnail: string; technicalDrawing: string };
 };
 
 export default function ProductClient({ product }: { product: Product }) {
