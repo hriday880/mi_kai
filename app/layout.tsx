@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
-import { Cormorant_Garamond, Outfit } from 'next/font/google';
+import { Cormorant_Garamond, Outfit, Shippori_Mincho, Noto_Serif_SC } from 'next/font/google';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import LightSwitch from '@/components/LightSwitch';
+import Navigation from '@/components/Navigation';
 import './globals.css';
 
 /* ── Font Configuration ───────────────────────────────────── */
@@ -18,6 +19,20 @@ const outfit = Outfit({
   weight: ['300', '400', '500'],
   variable: '--font-outfit',
   display: 'swap',
+});
+
+const shippori = Shippori_Mincho({
+  weight: ['400', '500', '700'],
+  variable: '--font-shippori',
+  display: 'swap',
+  preload: false,
+});
+
+const noto = Noto_Serif_SC({
+  weight: ['400', '500', '700'],
+  variable: '--font-noto',
+  display: 'swap',
+  preload: false,
 });
 
 /* ── Metadata & SEO ───────────────────────────────────────── */
@@ -74,7 +89,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${outfit.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${cormorant.variable} ${outfit.variable} ${shippori.variable} ${noto.variable}`} suppressHydrationWarning>
       <body
         suppressHydrationWarning
         style={{
@@ -83,6 +98,7 @@ export default function RootLayout({
         }}
       >
         <LanguageProvider>
+          <Navigation />
           <LightSwitch />
           {children}
         </LanguageProvider>

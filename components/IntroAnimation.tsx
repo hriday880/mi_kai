@@ -5,6 +5,19 @@ import { useLanguage } from '@/lib/LanguageContext';
 import styles from './IntroAnimation.module.css';
 import type * as THREE from 'three';
 
+interface SceneData {
+  THREE: typeof THREE;
+  renderer: THREE.WebGLRenderer;
+  scene: THREE.Scene;
+  camera: THREE.PerspectiveCamera;
+  boxGroup: THREE.Group;
+  lidPivot: THREE.Group;
+  innerLight: THREE.PointLight;
+  glowSprite: THREE.Sprite;
+  animating: boolean;
+  cleanup: () => void;
+}
+
 /*
  * THREE.JS 3D BOX — Intro Gate Animation
  * 
@@ -22,7 +35,7 @@ export default function IntroAnimation() {
   const introRef = useRef<HTMLDivElement>(null);
   const topHalfRef = useRef<HTMLDivElement>(null);
   const bottomHalfRef = useRef<HTMLDivElement>(null);
-  const sceneDataRef = useRef<any>(null);
+  const sceneDataRef = useRef<SceneData | null>(null);
   const rafRef = useRef<number | null>(null);
 
   // ── Initialize Three.js scene ──────────────────────────────

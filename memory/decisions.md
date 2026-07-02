@@ -65,3 +65,41 @@
 - **Context**: GSAP replaces the entire CSS `transform` property when animating. The hinge element had both `translateZ(-160px)` for positioning and needed `rotateX` for animation. GSAP was wiping the translateZ, causing the lid to fly off.
 - **Decision**: Split into `hingePosition` (holds translateZ, GSAP never touches) and `hingePivot` (holds rotateX, GSAP animates from 90→-20).
 - **Rationale**: Separation of concerns — positioning and animation are on different DOM elements so they can't conflict.
+
+---
+
+## 2026-07-02 — Codebase Audit & Fixes
+
+### Decision 12: Box Texture Optimization (Pending)
+- **Context**: The extracted PNG box textures in `public/box/` total ~24 MB.
+- **Decision**: Must optimize these images (e.g., WebP format, reduced resolution) before production to prevent severe load times.
+- **Rationale**: 24 MB is unacceptable for mobile web performance.
+
+### Decision 13: basePath Handling for Images
+- **Context**: The contact page uses `src="/logo-gold.svg"` as a string. With `basePath: '/mi_kai'` set in `next.config.mjs` for GitHub Pages, this will 404 in production.
+- **Decision**: Use Next.js static imports (e.g., `import logo from '@/public/logo-gold.svg'`) instead of string paths for all local assets.
+- **Rationale**: Next.js automatically prepends the `basePath` when using static imports.
+
+---
+
+## 2026-07-03 — Catalogue Bulk Extraction & Troubleshooting
+
+### Decision 14: Dummy Image Fallback via Bash
+- **Context**: Accidentally deleted 24MB box textures. `git restore` and `python3` failed due to missing Xcode Command Line Tools.
+- **Decision**: Wrote 1x1 dummy PNG files to disk using `base64 --decode` inside a standard bash loop.
+- **Rationale**: Allowed the site to compile and the 3D canvas to render without crashing while waiting for the user to install the developer tools.
+
+### Decision 15: Automated PDF Parsing over Manual Entry
+- **Context**: The user provided screenshots of a 21-page Kalp catalogue containing 70+ product families.
+- **Decision**: Wrote a custom Python script (`parse_catalogue.py`) using `pdfplumber` for table extraction and `PyMuPDF` for raw image extraction.
+- **Rationale**: Manual JSON entry would exceed token limits and cause hallucinations. Programmatic extraction ensures accuracy and scalability.
+
+### Decision 16: Complete Omission of Pricing
+- **Context**: User explicitly commanded: "DO NOT MENTION THE PRICES ANYWHERE".
+- **Decision**: The Python extraction script specifically ignores the price column during the mapping phase, and the UI `ProductDrawer` has no fields for pricing.
+- **Rationale**: Strict adherence to the user's business privacy constraints.
+
+### Decision 17: Slide-Out Drawer vs. Individual Pages
+- **Context**: 70+ products need specification display.
+- **Decision**: Built a slide-out `ProductDrawer` that overlays the main catalogue grid instead of generating 70 individual routes.
+- **Rationale**: Provides a faster, app-like experience. Keeps the user in the context of the catalogue without constant page reloading.

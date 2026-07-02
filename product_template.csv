@@ -1,5 +1,4 @@
-ProductID,ProductName,Category,ShortDescription,DetailedDescription,Price,Wattage,ColorTemperature,Dimensions,Material,ImageFilename
-MK-001,Aura Pendant,Pendant Lights,"Ultra-thin luxury LED pendant.","A statement piece crafted from aerospace-grade aluminum with a seamless edge-lit LED panel.",1200,45W,"2700K - 4000K (Tunable)","120cm x 5cm x 2cm","Brushed Brass / Aluminum",aura_pendant_final.png
-MK-002,Zenith Chandelier,Chandeliers,"Minimalist cascading light rings.","Three suspended rings of continuous, dot-less light, evoking a sense of floating weightlessness.",3500,120W,"3000K","80cm, 60cm, 40cm rings","Matte Black / Acrylic",zenith_chandelier_final.png
-MK-003,Lumina Wall Sconce,Wall Sconces,"Architectural accent lighting.","Provides a dramatic, high-CRI wash of light against walls, enhancing textures and luxury finishes.",450,15W,"2700K","30cm x 10cm x 5cm","Polished Nickel",lumina_sconce_final.png
-,,,,,,,,,,
+Category,Product Family,Model Number,Dimensions (mm),Cutout (mm),Finishes,Tagline
+Downlight,Atlas,LM-267-10W,85 x 85 x 65,45,"White, Black",Sleek trimless downlight
+Downlight,Atlas,LM-267-15W,75 x 75 x 70,55,"White, Black",Sleek trimless downlight
+Surface Mounted,Nova Surface,LM-505-7W,51 x 51 x 45,-,"White, Black",Premium surface cylinder

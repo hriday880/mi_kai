@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useLanguage } from '@/lib/LanguageContext';
 import styles from './Footer.module.css';
 import logoGold from '@/public/logo-gold.svg';
@@ -17,7 +18,19 @@ export default function Footer() {
       <div className={styles.topBorder} />
       
       <div className={styles.container}>
-        <div className={styles.logoContainer} onClick={scrollToTop}>
+        <div 
+          className={styles.logoContainer} 
+          onClick={scrollToTop}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              scrollToTop();
+            }
+          }}
+          aria-label="Scroll to top"
+        >
           <Image 
             src={logoGold} 
             alt="Mi-KAI Tokyo" 
@@ -34,9 +47,9 @@ export default function Footer() {
         <div className={styles.bottom}>
           <p className={styles.copyright}>{t('footer.copyright')}</p>
           <div className={styles.links}>
-            <span className={styles.link}>Privacy Policy</span>
+            <Link href="#" className={styles.link}>{t('footer.privacy')}</Link>
             <span className={styles.separator}>|</span>
-            <span className={styles.link}>Terms of Service</span>
+            <Link href="#" className={styles.link}>{t('footer.terms')}</Link>
           </div>
         </div>
       </div>

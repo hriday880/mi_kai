@@ -99,6 +99,36 @@
   width: 100%;
 }
 
+.navBackBtn {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 30px;
+  color: #d4af37;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 12px 24px;
+  transition: all 0.4s ease;
+  z-index: 1050;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.navBackBtn:hover {
+  color: #fff;
+  border-color: #d4af37;
+  background: rgba(212, 175, 55, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.2);
+}
+
 /* ─── Right Section ─── */
 .right {
   display: flex;

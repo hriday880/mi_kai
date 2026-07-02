@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useLanguage, type Lang } from '@/lib/LanguageContext';
@@ -8,12 +9,17 @@ import styles from './Navigation.module.css';
 import logoGold from '@/public/logo-gold.svg';
 
 export default function Navigation() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const isInnerPage = pathname !== '/';
+
   const { t, lang, setLang } = useLanguage();
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(isInnerPage);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
 
   const navLinks = [
+    { key: 'nav.catalogue', href: '/catalogue', isExternal: true },
     { key: 'nav.theHouse', href: '#the-house' },
     { key: 'nav.theExperience', href: '#the-experience' },
     { key: 'nav.theCraft', href: '#the-craft' },
@@ -21,6 +27,11 @@ export default function Navigation() {
   ];
 
   useEffect(() => {
+    if (isInnerPage) {
+      setVisible(true);
+      return;
+    }
+    
     const handleScroll = () => {
       // Show immediately or after a tiny scroll so it doesn't conflict with intro,
       // but since intro is an overlay, we can just show it when scrolled even 10px.
@@ -50,16 +61,25 @@ export default function Navigation() {
     };
   }, [mobileOpen]);
 
-  const scrollTo = useCallback(
-    (href: string) => {
+  const handleNavClick = useCallback(
+    (href: string, isExternal?: boolean) => {
       setMobileOpen(false);
+      
+      if (isExternal) {
+        router.push(href);
+        return;
+      }
+      
       const id = href.replace('#', '');
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // Fallback: If hash not found on current page, redirect to home page with hash
+        router.push(`/${href}`);
       }
     },
-    []
+    [router]
   );
 
   const languages: Lang[] = ['en', 'jp', 'cn'];
@@ -85,20 +105,22 @@ export default function Navigation() {
             />
           </Link>
 
-          {/* Desktop links */}
-          <ul className={styles.links}>
-            {navLinks.map((link) => (
-              <li key={link.key}>
-                <button
-                  className={styles.navLink}
-                  onClick={() => scrollTo(link.href)}
-                  type="button"
-                >
-                  {t(link.key)}
-                </button>
-              </li>
-            ))}
-          </ul>
+          {/* Desktop links - hidden on inner pages */}
+          {!isInnerPage && (
+            <ul className={styles.links}>
+              {navLinks.map((link) => (
+                <li key={link.key}>
+                  <button
+                    className={styles.navLink}
+                    onClick={() => handleNavClick(link.href, link.isExternal)}
+                    type="button"
+                  >
+                    {t(link.key)}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
 
           {/* Right section */}
           <div className={styles.right}>
@@ -145,6 +167,18 @@ export default function Navigation() {
         <div className={styles.accentLine} />
       </nav>
 
+      {/* Floating Back Button for Inner Pages - MUST be outside the transformed nav tag */}
+      {isInnerPage && (
+        <button 
+          className={styles.navBackBtn} 
+          onClick={() => router.back()}
+          type="button"
+          aria-label="Go back"
+        >
+          &larr; {t('nav.back')}
+        </button>
+      )}
+
       {/* Mobile drawer overlay */}
       <div
         className={`${styles.overlay} ${mobileOpen ? styles.overlayVisible : ''}`}
@@ -162,7 +196,7 @@ export default function Navigation() {
             <li key={link.key}>
               <button
                 className={styles.drawerLink}
-                onClick={() => scrollTo(link.href)}
+                onClick={() => handleNavClick(link.href, link.isExternal)}
                 type="button"
               >
                 {t(link.key)}

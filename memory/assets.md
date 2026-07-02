@@ -14,12 +14,12 @@
 ## Box Face Images
 | Asset | File | Status | Notes |
 |---|---|---|---|
-| Top face (logo) | `public/box/face_0.png` | ✅ Extracted | Gold foil "mi KAi TOKYO" on matte black |
-| Front face | `public/box/face_1.png` | ✅ Extracted | Side panel |
-| Back face | `public/box/face_2.png` | ✅ Extracted | Side panel |
-| Right face | `public/box/face_3.png` | ✅ Extracted | Side panel |
-| Left face (Kanji) | `public/box/face_4.png` | ✅ Extracted | 光明 + specs |
-| Bottom face | `public/box/face_5.png` | ✅ Extracted | Envelope-style fold |
+| Top face (logo) | `public/box/face_0.png` | ✅ 437 KB | Gold foil "mi KAi TOKYO" on matte black. Optimized from 7.3MB. |
+| Front face | `public/box/face_1.png` | ✅ 151 KB | Side panel. Optimized from 2.7MB. |
+| Back face | `public/box/face_2.png` | ✅ 164 KB | Side panel. Optimized from 2.6MB. |
+| Right face | `public/box/face_3.png` | ✅ 163 KB | Side panel. Optimized from 2.5MB. |
+| Left face (Kanji) | `public/box/face_4.png` | ✅ 155 KB | 光明 + specs. Optimized from 2.5MB. |
+| Bottom face | `public/box/face_5.png` | ✅ 429 KB | Envelope-style fold. Optimized from 6.3MB. |
 
 ## Box Reference Images (Low-res)
 | Asset | File | Status | Notes |

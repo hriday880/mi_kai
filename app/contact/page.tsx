@@ -5,6 +5,7 @@ import { useLanguage } from '@/lib/LanguageContext';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './contact.module.css';
+import logoGold from '@/public/logo-gold.svg';
 
 export default function ContactPage() {
   const { t } = useLanguage();
@@ -67,7 +68,7 @@ export default function ContactPage() {
         {/* Header */}
         <header className={styles.header}>
           <Image
-            src="/logo-gold.svg"
+            src={logoGold}
             alt="Mi-KAI Tokyo"
             width={180}
             height={60}
@@ -145,7 +146,7 @@ export default function ContactPage() {
             )}
 
             {status === 'error' && (
-              <p className={styles.errorMsg}>Something went wrong. Please try again.</p>
+              <p className={styles.errorMsg}>{t('contact.error')}</p>
             )}
           </form>
 

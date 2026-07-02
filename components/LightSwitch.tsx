@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import styles from './LightSwitch.module.css';
 
 export default function LightSwitch() {
+  const pathname = usePathname();
   const [lightsOn, setLightsOn] = useState(false);
   const [pulling, setPulling] = useState(false);
 
@@ -25,6 +27,12 @@ export default function LightSwitch() {
       setPulling(false);
     }, 400);
   }, []);
+
+  // Hide the pull cord on the product details pages where we have interactive light testing
+  // MUST be placed after all React hooks (useState, useEffect, useCallback)
+  if (pathname.match(/^\/catalogue\/.+/)) {
+    return null;
+  }
 
   return (
     <div className={styles.switchContainer}>

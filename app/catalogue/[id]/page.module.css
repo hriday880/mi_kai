@@ -1,0 +1,267 @@
+.main {
+  min-height: 100vh;
+  background-color: var(--color-void);
+  padding-bottom: var(--space-4xl);
+  position: relative;
+  z-index: 1;
+}
+
+/* Light Beam Feature */
+.lightBeam {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  /* Complex gradient combining warm white with the dynamic finish tint */
+  background: radial-gradient(circle at 50% -10%, 
+    color-mix(in srgb, var(--light-tint) 15%, rgba(255, 240, 220, 0.95)) 0%, 
+    color-mix(in srgb, var(--light-tint) 10%, rgba(255, 240, 220, 0.4)) 40%, 
+    transparent 80%);
+  mix-blend-mode: screen;
+}
+
+.lightBeamActive {
+  /* Class to trigger any additional active states if needed */
+}
+
+/* Hero Section */
+.heroSection {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  min-height: 400px;
+  background-color: #050505; /* Deep black to blend with the image */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  height: 100%;
+  mix-blend-mode: screen; /* Blends solid black backgrounds perfectly */
+}
+
+.heroImage {
+  filter: contrast(1.1) brightness(1.1);
+}
+
+/* Content Section */
+.contentSection {
+  padding: var(--space-3xl) var(--section-padding-x);
+  position: relative;
+  z-index: 10;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: var(--space-3xl);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: var(--space-md);
+}
+
+.category {
+  font-family: var(--font-body);
+  color: var(--color-champagne);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: block;
+  margin-top: var(--space-xs);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--space-3xl);
+  margin-bottom: var(--space-4xl);
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Finishes */
+.swatchList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.swatchItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  background: transparent;
+  border: none;
+  padding: var(--space-xs);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--duration-fast);
+  text-align: left;
+}
+
+.swatchItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.activeSwatch {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.swatchCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
+  transition: transform var(--duration-fast);
+}
+
+.activeSwatch .swatchCircle {
+  transform: scale(1.1);
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 0 0 2px var(--color-champagne);
+}
+
+.swatchName {
+  font-family: var(--font-body);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  transition: color var(--duration-fast);
+}
+
+.activeSwatch .swatchName {
+  color: var(--color-bright);
+}
+
+/* Table */
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table th {
+  font-family: var(--font-heading);
+  color: var(--color-champagne);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: var(--space-md);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.table td {
+  font-family: var(--font-body);
+  color: var(--text-secondary);
+  padding: var(--space-md);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: var(--text-sm);
+  transition: color var(--duration-fast);
+}
+
+.centerAlign {
+  text-align: center !important;
+}
+
+.activeRow td {
+  color: var(--color-bright);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Skeuomorphic Rocker Switch */
+.switchButton {
+  width: 60px;
+  height: 40px;
+  border-radius: 4px;
+  background: #f0f0f0;
+  border: 1px solid #dcdcdc;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3), inset 0 1px 3px rgba(255,255,255,0.8);
+  display: inline-block;
+  vertical-align: middle;
+  padding: 4px;
+}
+
+/* The Rocker Body */
+.switchButton::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border-radius: 2px;
+  /* Default (OFF state): left side raised, right side pressed */
+  background: linear-gradient(to right, #ffffff 0%, #e0e0e0 50%, #d0d0d0 100%);
+  box-shadow: -2px 0 5px rgba(255,255,255,0.8) inset, 2px 0 5px rgba(0,0,0,0.2) inset;
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* The Indicator Light */
+.switchHandle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 12px;
+  border-radius: 2px;
+  background: #a0a0a0;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+/* ON State */
+.switchOn {
+  /* Frame shadow can adjust slightly if needed, but mostly the rocker changes */
+}
+
+.switchOn::before {
+  /* ON state: left side pressed, right side raised */
+  background: linear-gradient(to right, #d0d0d0 0%, #e0e0e0 50%, #ffffff 100%);
+  box-shadow: -2px 0 5px rgba(0,0,0,0.2) inset, 2px 0 5px rgba(255,255,255,0.8) inset;
+}
+
+.switchOn .switchHandle {
+  /* Glowing Green Indicator */
+  background: #39ff14;
+  box-shadow: 0 0 8px 2px rgba(57, 255, 20, 0.6), inset 0 1px 2px rgba(255,255,255,0.8);
+}
+
+/* Utilities */
+.notFound {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  color: var(--color-bright);
+}
+
+.backLink {
+  color: var(--color-champagne);
+  text-decoration: underline;
+}
