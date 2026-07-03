@@ -200,3 +200,35 @@
   background: #e6c555;
   transform: translateY(-2px);
 }
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+  .main {
+    flex-direction: column;
+    padding-top: 60px; /* Adjust for mobile navbar if present */
+  }
+
+  .sidebar {
+    width: 100%;
+    height: 50vh;
+    border-right: none;
+    border-top: 1px solid #333;
+    order: 2; /* Move sidebar below canvas */
+  }
+
+  .canvasContainer {
+    height: 50vh;
+    order: 1; /* Canvas on top */
+  }
+
+  .floatingButton {
+    bottom: 20px;
+    right: 20px;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .tabs {
+    grid-template-columns: 1fr; /* Stack tabs on very small screens or keep 1fr 1fr */
+  }
+}

@@ -552,7 +552,8 @@ export default function StudioClient() {
         {/* Camera View Controls */}
         <div style={{ 
           position: 'absolute', top: '1.5rem', left: '1.5rem', zIndex: 100, 
-          display: 'flex', gap: '0.5rem', background: 'rgba(0,0,0,0.5)', padding: '0.5rem', borderRadius: '8px', backdropFilter: 'blur(4px)'
+          display: 'flex', gap: '0.5rem', background: 'rgba(0,0,0,0.5)', padding: '0.5rem', borderRadius: '8px', backdropFilter: 'blur(4px)',
+          flexWrap: 'wrap', maxWidth: 'calc(100% - 3rem)'
         }}>
           {['iso', 'top', 'front', 'side'].map(mode => (
             <button
