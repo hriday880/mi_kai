@@ -3,34 +3,34 @@ import autoTable from 'jspdf-autotable';
 import { RecommendationResult } from './recommender';
 import { SurfaceResult, generateHeatmapDataURL } from './lux-calculator';
 
-function getSurfaceStatus(surface: SurfaceResult, mainTargetLux: number) {
+function getSurfaceStatus(surface: SurfaceResult, mainTargetLux: number, t: (key: string) => string) {
   const isFloor = surface.name.toLowerCase().includes('floor');
   const isCeiling = surface.name.toLowerCase().includes('ceiling');
   
   if (isCeiling) {
-    return { status: 'INFO', message: 'Ceiling illuminance typically relies on indirect bounces or uplighting, which are not calculated in this direct-light simulation.' };
+    return { status: t('pdf.status.INFO'), message: t('pdf.statusMsg.ceilingInfo') };
   }
   
   const target = isFloor ? mainTargetLux : 75; // 75 lux is a standard baseline for vertical walls
   const uniformity = surface.average > 0 ? (surface.min / surface.average) : 0;
   
   if (surface.average > target * 1.5) {
-    return { status: 'OVERLIT', message: `Surface is significantly brighter than target (~${target}lx). Consider reducing wattage or fixture count.` };
+    return { status: t('pdf.status.OVERLIT'), message: t('pdf.statusMsg.significantlyBrighter').replace('{{target}}', target.toString()) };
   }
   
   if (surface.average >= target * 0.85) {
     if (uniformity >= 0.1) {
-      return { status: 'OPTIMAL', message: `Surface meets target illuminance with acceptable uniformity.` };
+      return { status: t('pdf.status.OPTIMAL'), message: t('pdf.statusMsg.meetsTarget') };
     } else {
-      return { status: 'POOR UNIFORMITY', message: `Surface meets average lux target, but has dark spots (Emin: ${Math.round(surface.min)}lx).` };
+      return { status: t('pdf.status.POOR UNIFORMITY'), message: t('pdf.statusMsg.meetsAveragePoorUniformity').replace('{{emin}}', Math.round(surface.min).toString()) };
     }
   }
   
   if (surface.average >= target * 0.5) {
-    return { status: 'SUBOPTIMAL', message: `Surface is slightly underlit. Target is ~${target}lx.` };
+    return { status: t('pdf.status.SUBOPTIMAL'), message: t('pdf.statusMsg.slightlyUnderlit').replace('{{target}}', target.toString()) };
   }
   
-  return { status: 'POOR', message: `Surface is severely underlit. Target is ~${target}lx.` };
+  return { status: t('pdf.status.POOR'), message: t('pdf.statusMsg.severelyUnderlit').replace('{{target}}', target.toString()) };
 }
 
 const REFLECTOR_COLORS = [
@@ -47,7 +47,9 @@ export async function generatePDFReport({
   surfaceResults,
   recommendation,
   placedLights,
-  productsData
+  productsData,
+  lang,
+  t
 }: {
   roomId: string;
   dimensions: { width: number, length: number, height: number };
@@ -56,6 +58,8 @@ export async function generatePDFReport({
   recommendation: RecommendationResult;
   placedLights: any[]; // from StudioClient PlacedLight
   productsData: any[];
+  lang: string;
+  t: (key: string) => string;
 }) {
   const doc = new jsPDF({
     orientation: 'portrait',
@@ -89,18 +93,19 @@ export async function generatePDFReport({
   let pageNum = 1;
 
   // --- PAGE 1: COVER & RENDERINGS ---
-  addHeader('Project Renderings');
+  addHeader(t('pdf.projectRenderings'));
   
   doc.setTextColor(30, 30, 30);
   doc.setFontSize(22);
   doc.setFont("helvetica", "bold");
-  doc.text('Lighting Design Report', 15, 40);
+  doc.text(t('pdf.lightingDesignReport'), 15, 40);
   
   doc.setFontSize(11);
   doc.setFont("helvetica", "normal");
-  doc.text(`Generated on: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`, 15, 48);
-  doc.text(`Room Type: ${roomId.toUpperCase()}`, 15, 54);
-  doc.text(`Dimensions: ${dimensions.width}m (W) x ${dimensions.length}m (L) x ${dimensions.height || 3}m (H)`, 15, 60);
+  const locale = lang === 'jp' ? 'ja-JP' : lang === 'cn' ? 'zh-CN' : 'en-US';
+  doc.text(`${t('pdf.generatedOn')}: ${new Date().toLocaleDateString(locale, { month: 'long', day: 'numeric', year: 'numeric' })}`, 15, 48);
+  doc.text(`${t('pdf.roomType')}: ${roomId.toUpperCase()}`, 15, 54);
+  doc.text(`${t('pdf.dimensions')}: ${dimensions.width}m (W) x ${dimensions.length}m (L) x ${dimensions.height || 3}m (H)`, 15, 60);
   
   // Draw Multiple Renders
   if (renderDataUrls && renderDataUrls.length > 0) {
@@ -124,7 +129,7 @@ export async function generatePDFReport({
 
   // --- PAGE 2: LUMINAIRE PARTS LIST (BOM) ---
   doc.addPage();
-  addHeader('Luminaire Parts List');
+  addHeader(t('pdf.luminairePartsList'));
   
   const partsMap = new Map<string, any>();
   let totalPower = 0;
@@ -162,7 +167,7 @@ export async function generatePDFReport({
 
   autoTable(doc, {
     startY: 40,
-    head: [['#', 'Luminaire / Type', 'Power', 'CCT', 'Reflector Finish', 'Qty', 'Total Power']],
+    head: [['#', t('pdf.luminaireType'), t('pdf.power'), t('pdf.cct'), t('pdf.reflectorFinish'), t('pdf.qty'), t('pdf.totalPower')]],
     body: tableBody,
     headStyles: { fillColor: [212, 175, 55], textColor: [255, 255, 255] },
     alternateRowStyles: { fillColor: [250, 250, 250] },
@@ -171,11 +176,11 @@ export async function generatePDFReport({
 
   let finalY = (doc as any).lastAutoTable.finalY + 15;
   doc.setFont("helvetica", "bold");
-  doc.text(`Total Installed Power: ${totalPower} W`, 15, finalY);
+  doc.text(`${t('pdf.totalInstalledPower')}: ${totalPower} W`, 15, finalY);
   
   const roomArea = dimensions.width * dimensions.length;
   const powerDensity = (totalPower / roomArea).toFixed(2);
-  doc.text(`Specific Connected Load: ${powerDensity} W/m²`, 15, finalY + 7);
+  doc.text(`${t('pdf.specificConnectedLoad')}: ${powerDensity} W/m²`, 15, finalY + 7);
 
   // Recommendation status
   finalY += 25;
@@ -184,7 +189,7 @@ export async function generatePDFReport({
   doc.setTextColor(30, 30, 30);
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
-  doc.text(`Design Status: ${recommendation.status.toUpperCase()}`, 20, finalY + 8);
+  doc.text(`${t('pdf.designStatus')}: ${t('pdf.status.' + recommendation.status.toUpperCase())}`, 20, finalY + 8);
   doc.setFont("helvetica", "normal");
   doc.text(doc.splitTextToSize(recommendation.message, pageWidth - 40), 20, finalY + 14);
 
@@ -214,38 +219,44 @@ export async function generatePDFReport({
     }
     
     doc.addPage();
-    addHeader(`Illuminance Map: ${surface.name}`);
+    addHeader(`${t('pdf.illuminanceMap')}: ${surface.name}`);
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(50, 50, 50);
-    doc.text(`Calculation Surface: ${surface.name}`, 15, 40);
-    doc.text(`Grid Spacing: 0.5m x 0.5m`, 15, 45);
+    doc.text(`${t('pdf.calculationSurface')}: ${surface.name}`, 15, 40);
+    doc.text(`${t('pdf.gridSpacing')}: 0.5m x 0.5m`, 15, 45);
 
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
     const roundedAvg = Math.round(surface.average);
     const roundedMin = Math.round(surface.min);
     
-    doc.text(`Em: ${roundedAvg} lx`, 120, 40);
-    doc.text(`Emin: ${roundedMin} lx`, 155, 40);
-    doc.text(`Emax: ${Math.round(surface.max)} lx`, 120, 45);
+    doc.text(`${t('pdf.em')}: ${roundedAvg} lx`, 120, 40);
+    doc.text(`${t('pdf.emin')}: ${roundedMin} lx`, 155, 40);
+    doc.text(`${t('pdf.emax')}: ${Math.round(surface.max)} lx`, 120, 45);
     const uniformity = roundedAvg > 0 ? (roundedMin / roundedAvg).toFixed(2) : '0.00';
-    doc.text(`U0: ${uniformity}`, 155, 45);
+    doc.text(`${t('pdf.u0')}: ${uniformity}`, 155, 45);
 
     // Surface Status Box
-    const surfVerdict = getSurfaceStatus(surface, recommendation.targetLux);
-    if (surfVerdict.status === 'OPTIMAL') doc.setFillColor(230, 255, 230); // light green
-    else if (surfVerdict.status === 'SUBOPTIMAL') doc.setFillColor(255, 245, 230); // light orange
-    else if (surfVerdict.status === 'OVERLIT') doc.setFillColor(255, 255, 210); // light yellow
-    else if (surfVerdict.status === 'INFO') doc.setFillColor(240, 240, 245); // light blue-gray
+    const surfVerdict = getSurfaceStatus(surface, recommendation.targetLux, t);
+    // Find the original EN status for coloring purposes, or compare with translated string
+    const isOptimal = surfVerdict.status === t('pdf.status.OPTIMAL');
+    const isSuboptimal = surfVerdict.status === t('pdf.status.SUBOPTIMAL');
+    const isOverlit = surfVerdict.status === t('pdf.status.OVERLIT');
+    const isInfo = surfVerdict.status === t('pdf.status.INFO');
+    
+    if (isOptimal) doc.setFillColor(230, 255, 230); // light green
+    else if (isSuboptimal) doc.setFillColor(255, 245, 230); // light orange
+    else if (isOverlit) doc.setFillColor(255, 255, 210); // light yellow
+    else if (isInfo) doc.setFillColor(240, 240, 245); // light blue-gray
     else doc.setFillColor(255, 230, 230); // light red
     
     doc.rect(15, 52, pageWidth - 30, 15, 'F');
     doc.setTextColor(30, 30, 30);
     doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
-    doc.text(`Design Status: ${surfVerdict.status}`, 20, 58);
+    doc.text(`${t('pdf.designStatus')}: ${surfVerdict.status}`, 20, 58);
     doc.setFont("helvetica", "normal");
     doc.text(surfVerdict.message, 20, 63);
 

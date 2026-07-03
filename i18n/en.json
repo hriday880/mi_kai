@@ -172,5 +172,70 @@
     "Silver": "Silver",
     "Rose Gold": "Rose Gold",
     "Grey": "Grey"
+  },
+  "studio": {
+    "title": "Mi-KAI Light Studio",
+    "settings": "Settings",
+    "products": "Products",
+    "roomDimensions": "Room Dimensions",
+    "width": "Width (m)",
+    "length": "Length (m)",
+    "height": "Height (m)",
+    "clearAll": "Clear All",
+    "generateReport": "Generate Report",
+    "generating": "Generating...",
+    "dragHint": "Drag lights from the sidebar onto the canvas..."
+  },
+  "pdf": {
+    "projectRenderings": "Project Renderings",
+    "lightingDesignReport": "Lighting Design Report",
+    "generatedOn": "Generated on",
+    "roomType": "Room Type",
+    "dimensions": "Dimensions",
+    "luminairePartsList": "Luminaire Parts List",
+    "luminaireType": "Luminaire / Type",
+    "power": "Power",
+    "cct": "CCT",
+    "reflectorFinish": "Reflector Finish",
+    "qty": "Qty",
+    "totalPower": "Total Power",
+    "totalInstalledPower": "Total Installed Power",
+    "specificConnectedLoad": "Specific Connected Load",
+    "designStatus": "Design Status",
+    "illuminanceMap": "Illuminance Map",
+    "calculationSurface": "Calculation Surface",
+    "gridSpacing": "Grid Spacing",
+    "em": "Em",
+    "emin": "Emin",
+    "emax": "Emax",
+    "u0": "U0",
+    "status": {
+      "OPTIMAL": "OPTIMAL",
+      "OVERLIT": "OVERLIT",
+      "SUBOPTIMAL": "SUBOPTIMAL",
+      "POOR": "POOR",
+      "INFO": "INFO",
+      "POOR UNIFORMITY": "POOR UNIFORMITY"
+    },
+    "recommender": {
+      "meetsStandard": "Your lighting design meets recommended standards.",
+      "noLights": "You have not placed any lights yet. Add fixtures to reach the target illumination.",
+      "underlit": "Your room is receiving {{lux}} lx. Recommended minimum is {{target}} lx. Consider adding more fixtures.",
+      "overlitWalls": "Your room is receiving {{lux}} lx, which is very bright for a {{room}}. Your walls are also overlit, likely due to fixtures placed too close to them. Consider reducing the number of fixtures or redirecting them away from the walls.",
+      "darkWalls": "Your room is receiving {{lux}} lx, which is very bright for a {{room}}. However, your walls remain dark. Consider reducing the number of ambient downlights and adding dedicated wall-washers or accent fixtures to balance the space.",
+      "overlitGeneric": "Your room is receiving {{lux}} lx, which is very bright for a {{room}}. Consider reducing the overall number of fixtures or lowering their intensity.",
+      "mixedTempsTitle": "Mixed Color Temperatures",
+      "mixedTempsDetail": "You are mixing warm ({{minTemp}}K) and cool ({{maxTemp}}K) lighting. For a cohesive atmosphere, consider matching color temperatures.",
+      "weatherResistanceTitle": "Weather Resistance Required",
+      "weatherResistanceDetail": "Ensure the selected fixtures are rated for outdoor use (IP54 or higher) before final installation."
+    },
+    "statusMsg": {
+      "ceilingInfo": "Ceiling illuminance typically relies on indirect bounces or uplighting, which are not calculated in this direct-light simulation.",
+      "significantlyBrighter": "Surface is significantly brighter than target (~{{target}}lx). Consider reducing wattage or fixture count.",
+      "meetsTarget": "Surface meets target illuminance with acceptable uniformity.",
+      "meetsAveragePoorUniformity": "Surface meets average lux target, but has dark spots (Emin: {{emin}}lx).",
+      "slightlyUnderlit": "Surface is slightly underlit. Target is ~{{target}}lx.",
+      "severelyUnderlit": "Surface is severely underlit. Target is ~{{target}}lx."
+    }
   }
 }

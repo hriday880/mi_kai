@@ -171,5 +171,70 @@
     "Silver": "银色",
     "Rose Gold": "玫瑰金",
     "Grey": "灰色"
+  },
+  "studio": {
+    "title": "Mi-KAI Light Studio",
+    "settings": "设置",
+    "products": "产品",
+    "roomDimensions": "房间尺寸",
+    "width": "宽度 (m)",
+    "length": "长度 (m)",
+    "height": "高度 (m)",
+    "clearAll": "清除所有",
+    "generateReport": "生成报告",
+    "generating": "正在生成...",
+    "dragHint": "从侧边栏将灯具拖到画布上..."
+  },
+  "pdf": {
+    "projectRenderings": "项目渲染图",
+    "lightingDesignReport": "照明设计报告",
+    "generatedOn": "生成日期",
+    "roomType": "房间类型",
+    "dimensions": "尺寸",
+    "luminairePartsList": "灯具部件清单",
+    "luminaireType": "灯具 / 类型",
+    "power": "功率",
+    "cct": "色温",
+    "reflectorFinish": "反射罩饰面",
+    "qty": "数量",
+    "totalPower": "总功率",
+    "totalInstalledPower": "总安装功率",
+    "specificConnectedLoad": "特定连接负载",
+    "designStatus": "设计状态",
+    "illuminanceMap": "照度图",
+    "calculationSurface": "计算表面",
+    "gridSpacing": "网格间距",
+    "em": "平均照度 (Em)",
+    "emin": "最小照度 (Emin)",
+    "emax": "最大照度 (Emax)",
+    "u0": "均匀度 (U0)",
+    "status": {
+      "OPTIMAL": "最佳",
+      "OVERLIT": "过度照明",
+      "SUBOPTIMAL": "次优",
+      "POOR": "差",
+      "INFO": "信息",
+      "POOR UNIFORMITY": "均匀度差"
+    },
+    "recommender": {
+      "meetsStandard": "您的照明设计符合推荐标准。",
+      "noLights": "您尚未放置任何灯具。请添加灯具以达到目标照度。",
+      "underlit": "您的房间接收到 {{lux}} lx 的照度。推荐的最低照度为 {{target}} lx。考虑增加更多灯具。",
+      "overlitWalls": "您的房间接收到 {{lux}} lx 的照度，对于 {{room}} 来说非常亮。您的墙壁也过度照明，可能是因为灯具离墙太近。考虑减少灯具数量或调整灯具方向远离墙壁。",
+      "darkWalls": "您的房间接收到 {{lux}} lx 的照度，对于 {{room}} 来说非常亮。但是您的墙壁仍然很暗。考虑减少环境筒灯，并添加专用的洗墙灯或重点照明灯具来平衡空间。",
+      "overlitGeneric": "您的房间接收到 {{lux}} lx 的照度，对于 {{room}} 来说非常亮。考虑减少灯具总数或降低其亮度。",
+      "mixedTempsTitle": "色温混合",
+      "mixedTempsDetail": "您正在混合使用暖色 ({{minTemp}}K) 和冷色 ({{maxTemp}}K) 照明。为了营造协调的氛围，请考虑统一色温。",
+      "weatherResistanceTitle": "需要防风雨性能",
+      "weatherResistanceDetail": "在最终安装前，请确保所选灯具适合户外使用（IP54 或更高）。"
+    },
+    "statusMsg": {
+      "ceilingInfo": "天花板照度通常依赖于间接反射或向上照明，这在直接光模拟中未进行计算。",
+      "significantlyBrighter": "表面亮度明显高于目标值（约 {{target}}lx）。考虑降低瓦数或灯具数量。",
+      "meetsTarget": "表面达到目标照度，均匀度可接受。",
+      "meetsAveragePoorUniformity": "表面达到平均照度目标，但存在暗点（最小照度：{{emin}}lx）。",
+      "slightlyUnderlit": "表面照度略显不足。目标值为约 {{target}}lx。",
+      "severelyUnderlit": "表面照度严重不足。目标值为约 {{target}}lx。"
+    }
   }
 }

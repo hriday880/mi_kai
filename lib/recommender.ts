@@ -20,7 +20,7 @@ export function generateRecommendations(
   roomId: string,
   surfaceResults: any[],
   lights: any[], // PlacedLight array
-  productsData: any[] // full catalogue
+  t: (key: string) => string
 ): RecommendationResult {
   const flags: Flag[] = [];
   const standard = (luxStandards as any)[roomId];
@@ -32,14 +32,16 @@ export function generateRecommendations(
   const averageLux = floorResult ? floorResult.average : 0;
 
   let status: 'under' | 'optimal' | 'over' = 'optimal';
-  let message = "Your lighting design meets recommended standards.";
+  let message = t('pdf.recommender.meetsStandard');
 
   if (lights.length === 0) {
     status = 'under';
-    message = "You have not placed any lights yet. Add fixtures to reach the target illumination.";
+    message = t('pdf.recommender.noLights');
   } else if (averageLux < targetMin) {
     status = 'under';
-    message = `Your room is receiving ${Math.round(averageLux)} lx. Recommended minimum is ${targetMin} lx. Consider adding more fixtures.`;
+    message = t('pdf.recommender.underlit')
+      .replace('{{lux}}', Math.round(averageLux).toString())
+      .replace('{{target}}', targetMin.toString());
   } else if (averageLux > targetMax * 1.5) {
     status = 'over';
     
@@ -50,11 +52,17 @@ export function generateRecommendations(
     const darkWalls = walls.filter(w => w.average < wallTarget * 0.5);
 
     if (overlitWalls.length > 0) {
-      message = `Your room is receiving ${Math.round(averageLux)} lx, which is very bright for a ${roomId}. Your walls are also overlit, likely due to fixtures placed too close to them. Consider reducing the number of fixtures or redirecting them away from the walls.`;
+      message = t('pdf.recommender.overlitWalls')
+        .replace('{{lux}}', Math.round(averageLux).toString())
+        .replace('{{room}}', roomId.toUpperCase());
     } else if (darkWalls.length > 0) {
-      message = `Your room is receiving ${Math.round(averageLux)} lx, which is very bright for a ${roomId}. However, your walls remain dark. Consider reducing the number of ambient downlights and adding dedicated wall-washers or accent fixtures to balance the space.`;
+      message = t('pdf.recommender.darkWalls')
+        .replace('{{lux}}', Math.round(averageLux).toString())
+        .replace('{{room}}', roomId.toUpperCase());
     } else {
-      message = `Your room is receiving ${Math.round(averageLux)} lx, which is very bright for a ${roomId}. Consider reducing the overall number of fixtures or lowering their intensity.`;
+      message = t('pdf.recommender.overlitGeneric')
+        .replace('{{lux}}', Math.round(averageLux).toString())
+        .replace('{{room}}', roomId.toUpperCase());
     }
   }
 
@@ -67,8 +75,10 @@ export function generateRecommendations(
       flags.push({
         severity: 'info',
         code: 'MIXED_TEMPS',
-        title: 'Mixed Color Temperatures',
-        detail: `You are mixing warm (${minTemp}K) and cool (${maxTemp}K) lighting. For a cohesive atmosphere, consider matching color temperatures.`
+        title: t('pdf.recommender.mixedTempsTitle'),
+        detail: t('pdf.recommender.mixedTempsDetail')
+          .replace('{{minTemp}}', minTemp.toString())
+          .replace('{{maxTemp}}', maxTemp.toString())
       });
     }
   }
@@ -79,8 +89,8 @@ export function generateRecommendations(
     flags.push({
       severity: 'warning',
       code: 'INDOOR_OUTDOOR',
-      title: 'Weather Resistance Required',
-      detail: 'Ensure the selected fixtures are rated for outdoor use (IP54 or higher) before final installation.'
+      title: t('pdf.recommender.weatherResistanceTitle'),
+      detail: t('pdf.recommender.weatherResistanceDetail')
     });
   }
 

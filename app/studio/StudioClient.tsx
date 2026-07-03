@@ -14,6 +14,7 @@ import { SurfaceDefinition, calculateSurfaceLux } from '../../lib/lux-calculator
 import { generateRecommendations } from '../../lib/recommender';
 import { generatePDFReport } from '../../lib/pdf-builder';
 import * as THREE from 'three';
+import { useLanguage } from '../../lib/LanguageContext';
 
 // Helper to switch camera views
 function CameraController({ viewMode }: { viewMode: string }) {
@@ -206,6 +207,7 @@ const REFLECTOR_COLORS = [
 ];
 
 export default function StudioClient() {
+  const { t, lang } = useLanguage();
   const [activePreset, setActivePreset] = useState<RoomPresetId>('bedroom');
   const [dimensions, setDimensions] = useState(roomPresetsData.bedroom.defaultDimensions);
   const [wallColor, setWallColor] = useState('#eeeeee');
@@ -355,7 +357,7 @@ export default function StudioClient() {
       const surfaceResults = surfaces.map(s => calculateSurfaceLux(s, lightsData, gs));
 
       // 3. Generate Recommendations (based on floor and walls)
-      const recommendation = generateRecommendations(activePreset, surfaceResults, placedLights, productsData);
+      const recommendation = generateRecommendations(activePreset, surfaceResults, placedLights, t);
 
       // 4. Build Multi-Surface PDF
       await generatePDFReport({
@@ -365,7 +367,9 @@ export default function StudioClient() {
         surfaceResults: surfaceResults,
         recommendation,
         placedLights: placedLights,
-        productsData
+        productsData,
+        lang,
+        t
       });
 
     } catch (e) {
@@ -379,10 +383,9 @@ export default function StudioClient() {
     <>
       <div className={styles.sidebar}>
         <div className={styles.header}>
-          <h1>MI-KAI LIGHT STUDIO</h1>
-          <p>Design your space</p>
+          <h1>{t('studio.title').toUpperCase()}</h1>
           <p style={{ fontSize: '0.8rem', color: '#d4af37', marginTop: '0.5rem' }}>
-            Select a product and click on the floor to place it.
+            {t('studio.dragHint')}
           </p>
         </div>
 
@@ -402,10 +405,10 @@ export default function StudioClient() {
         </div>
 
         <div className={styles.section}>
-          <h2>Room Properties</h2>
+          <h2>{t('studio.roomDimensions')}</h2>
           <div className={styles.dimensions} style={{ marginBottom: '1rem' }}>
             <div className={styles.inputGroup}>
-              <label>Width</label>
+              <label>{t('studio.width')}</label>
               <input 
                 type="number" 
                 step="0.5" 
@@ -414,7 +417,7 @@ export default function StudioClient() {
               />
             </div>
             <div className={styles.inputGroup}>
-              <label>Length</label>
+              <label>{t('studio.length')}</label>
               <input 
                 type="number" 
                 step="0.5" 
@@ -424,7 +427,7 @@ export default function StudioClient() {
             </div>
             {currentPreset.hasCeiling && (
               <div className={styles.inputGroup}>
-                <label>Height</label>
+                <label>{t('studio.height')}</label>
                 <input 
                   type="number" 
                   step="0.1" 
@@ -635,7 +638,7 @@ export default function StudioClient() {
           onClick={handleGenerateReport}
           disabled={isGenerating}
         >
-          {isGenerating ? 'Generating...' : 'Generate Report'}
+          {isGenerating ? t('studio.generating') : t('studio.generateReport')}
         </button>
       </div>
     </>
