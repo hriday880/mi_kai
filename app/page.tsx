@@ -1,5 +1,6 @@
 import IntroAnimation from '@/components/IntroAnimation';
 import TheHouse from '@/components/TheHouse';
+import TheStudioFeature from '@/components/TheStudioFeature';
 import TheExperience from '@/components/TheExperience';
 import TheCraft from '@/components/TheCraft';
 import TheLiving from '@/components/TheLiving';
@@ -15,6 +16,7 @@ export default function Home() {
       <TheExperience />
       <TheCraft />
       <TheLiving />
+      <TheStudioFeature />
       
       <Footer />
     </main>

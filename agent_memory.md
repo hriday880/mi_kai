@@ -35,9 +35,8 @@
 
 ## 🗂️ Project Status
 
-- **Phase**: Website ~100% complete. Core features (3D Intro, i18n, sections) built.
-- **Catalogue Integration**: Fully automated ML pipeline built (`rembg` + `easyocr`). 
-  - Fixed PDF index offset issue (H028 matched correctly to Page 58).
-  - Ingested 44 premium products (images and spec data).
-- **Localization**: Catalogue data (categories and finishes) mapped and dynamically localized into Japanese and Chinese.
+- **Phase**: Website core built. Catalogue integrated. Light Studio and Report Engine implemented.
+- **Catalogue Integration**: Fully automated ML pipeline built (`rembg` + `easyocr`). Ingested 44 premium products.
+- **Mi-KAI Light Studio**: Built a 3D layout tool allowing users to design rooms (indoor/outdoor), place lights from the catalogue, and customize CCT and reflector finishes.
+- **DIALux-Style Report Engine**: Developed a client-side physics engine calculating 3D Lambertian cosine falloff for all 6 architectural surfaces (Floor, Ceiling, 4 Walls). Generates a professional multi-page PDF with BOM, multi-angle 4K renders, and numeric illuminance grids.
 - **Last Updated**: 2026-07-03

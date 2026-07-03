@@ -103,3 +103,27 @@
 - **Context**: 70+ products need specification display.
 - **Decision**: Built a slide-out `ProductDrawer` that overlays the main catalogue grid instead of generating 70 individual routes.
 - **Rationale**: Provides a faster, app-like experience. Keeps the user in the context of the catalogue without constant page reloading.
+
+---
+
+## 2026-07-03 — Mi-KAI Light Studio & Report Engine
+
+### Decision 18: Client-Side DIALux Engine
+- **Context**: User wanted a professional lighting report similar to DIALux (BOM, Heatmaps, Renders).
+- **Decision**: Built the entire physics and rendering engine client-side using `Three.js`/`R3F` and `jsPDF`. No server-side rendering or cloud GPUs are used.
+- **Rationale**: Keeps the application 100% free to host while still delivering instant, accurate architectural reports.
+
+### Decision 19: Physical Wattage over Arbitrary Intensity
+- **Context**: R3F lights typically use an arbitrary intensity value (0-100), but professional reports need real wattage.
+- **Decision**: Replaced the UI intensity slider with Wattage buttons that pull available specs directly from `products.json`. The physics engine (`lux-calculator.ts`) estimates Candela dynamically based on Wattage and Beam Angle.
+- **Rationale**: Ensures the tool is actually useful for engineers, not just a toy.
+
+### Decision 20: 3D Surface Normal Physics (6-Plane Calculation)
+- **Context**: User requested illuminance maps for walls and ceilings, not just the floor.
+- **Decision**: Generalized the `calculateLuxAtPoint` engine. Instead of assuming a flat floor (`Y=0`), it now accepts a `normal` vector (e.g., `[1,0,0]` for the Left Wall) and calculates the angle of incidence using the dot product of the light ray and the surface normal.
+- **Rationale**: Accurately simulates Lambertian cosine falloff on vertical surfaces, which is critical for wall-washers and downlights placed near walls.
+
+### Decision 21: Multi-Angle Screenshot Sequence
+- **Context**: Professional reports need multiple camera angles of the 3D room.
+- **Decision**: Built an async state machine that temporarily seizes the R3F camera, sets `pixelRatio` to 2.5 (for 4K sharpness), flies to 3 different angles, waits for rendering, captures screenshots, and restores the user's view.
+- **Rationale**: Achieves high-end visualization without requiring a heavy external path-tracing library.

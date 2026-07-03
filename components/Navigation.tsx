@@ -20,6 +20,7 @@ export default function Navigation() {
 
   const navLinks = [
     { key: 'nav.catalogue', href: '/catalogue', isExternal: true },
+    { key: 'nav.studio', href: '/studio', isExternal: true },
     { key: 'nav.theHouse', href: '#the-house' },
     { key: 'nav.theExperience', href: '#the-experience' },
     { key: 'nav.theCraft', href: '#the-craft' },
@@ -47,7 +48,7 @@ export default function Navigation() {
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(timeout);
     };
-  }, []);
+  }, [isInnerPage]);
 
   /* Lock body scroll when mobile menu is open */
   useEffect(() => {
@@ -105,22 +106,20 @@ export default function Navigation() {
             />
           </Link>
 
-          {/* Desktop links - hidden on inner pages */}
-          {!isInnerPage && (
-            <ul className={styles.links}>
-              {navLinks.map((link) => (
-                <li key={link.key}>
-                  <button
-                    className={styles.navLink}
-                    onClick={() => handleNavClick(link.href, link.isExternal)}
-                    type="button"
-                  >
-                    {t(link.key)}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+          {/* Desktop links - always visible */}
+          <ul className={styles.links}>
+            {navLinks.map((link) => (
+              <li key={link.key}>
+                <button
+                  className={styles.navLink}
+                  onClick={() => handleNavClick(link.href, link.isExternal)}
+                  type="button"
+                >
+                  {t(link.key)}
+                </button>
+              </li>
+            ))}
+          </ul>
 
           {/* Right section */}
           <div className={styles.right}>

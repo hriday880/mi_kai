@@ -1,0 +1,37 @@
+{
+  "bedroom": {
+    "id": "bedroom",
+    "name": "Bedroom",
+    "icon": "",
+    "defaultDimensions": { "width": 4, "length": 5, "height": 3 },
+    "hasCeiling": true
+  },
+  "bathroom": {
+    "id": "bathroom",
+    "name": "Bathroom",
+    "icon": "",
+    "defaultDimensions": { "width": 3, "length": 3, "height": 2.8 },
+    "hasCeiling": true
+  },
+  "kitchen": {
+    "id": "kitchen",
+    "name": "Kitchen",
+    "icon": "",
+    "defaultDimensions": { "width": 4, "length": 4, "height": 2.8 },
+    "hasCeiling": true
+  },
+  "balcony": {
+    "id": "balcony",
+    "name": "Balcony",
+    "icon": "",
+    "defaultDimensions": { "width": 4, "length": 2, "height": 3 },
+    "hasCeiling": false
+  },
+  "garden": {
+    "id": "garden",
+    "name": "Garden",
+    "icon": "",
+    "defaultDimensions": { "width": 8, "length": 8, "height": 3 },
+    "hasCeiling": false
+  }
+}
