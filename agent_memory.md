@@ -11,6 +11,8 @@
 - [[memory/architecture]] — Website architecture & tech stack
 - [[memory/decisions]] — Chronological decision log
 - [[memory/assets]] — Asset tracker (logos, images, fonts)
+- [[memory/catalogue]] — 📖 Product Catalogue Database & Ingestion Pipeline
+- [[memory/studio]] — 📐 Mi-KAI Light Studio & PDF Report Engine
 - [[memory/thinking/_index]] — Model thinking & reasoning logs
   - [[memory/thinking/2026-07-01_planning_session]]
   - [[memory/thinking/2026-07-01_implementation_session]]
