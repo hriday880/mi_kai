@@ -117,8 +117,8 @@ function Screenshotter() {
                l.castShadow = (i < 8);
             });
 
-            // Save combined capture in lossless PNG for hyperrealism
-            captures.push(tempCanvas.toDataURL('image/png'));
+            // Save combined capture in compressed JPEG for hyperrealism without bloating PDF size
+            captures.push(tempCanvas.toDataURL('image/jpeg', 0.85));
             step++;
             setTimeout(processStep, 100);
             return;
@@ -325,38 +325,37 @@ export default function StudioClient() {
         surfaces.push({
           name: 'North Wall',
           width: sWidth, length: sHeight,
-          origin: [-sWidth/2 + gs/2, gs/2, -sLength/2],
-          uVector: [gs, 0, 0], vVector: [0, gs, 0],
+          origin: [-sWidth/2 + gs/2, sHeight - gs/2, -sLength/2],
+          uVector: [gs, 0, 0], vVector: [0, -gs, 0],
           normal: [0, 0, 1]
         });
         surfaces.push({
           name: 'West Wall',
           width: sLength, length: sHeight,
-          origin: [-sWidth/2, gs/2, -sLength/2 + gs/2],
-          uVector: [0, 0, gs], vVector: [0, gs, 0],
+          origin: [-sWidth/2, sHeight - gs/2, sLength/2 - gs/2],
+          uVector: [0, 0, -gs], vVector: [0, -gs, 0],
           normal: [1, 0, 0]
         });
         surfaces.push({
           name: 'East Wall',
           width: sLength, length: sHeight,
-          origin: [sWidth/2, gs/2, -sLength/2 + gs/2],
-          uVector: [0, 0, gs], vVector: [0, gs, 0],
+          origin: [sWidth/2, sHeight - gs/2, -sLength/2 + gs/2],
+          uVector: [0, 0, gs], vVector: [0, -gs, 0],
           normal: [-1, 0, 0]
         });
         surfaces.push({
           name: 'South Wall',
           width: sWidth, length: sHeight,
-          origin: [-sWidth/2 + gs/2, gs/2, sLength/2],
-          uVector: [gs, 0, 0], vVector: [0, gs, 0],
+          origin: [sWidth/2 - gs/2, sHeight - gs/2, sLength/2],
+          uVector: [-gs, 0, 0], vVector: [0, -gs, 0],
           normal: [0, 0, -1]
         });
       }
 
       const surfaceResults = surfaces.map(s => calculateSurfaceLux(s, lightsData, gs));
-      const floorResult = surfaceResults[0];
 
-      // 3. Generate Recommendations (based on floor)
-      const recommendation = generateRecommendations(activePreset, floorResult.average, placedLights, productsData);
+      // 3. Generate Recommendations (based on floor and walls)
+      const recommendation = generateRecommendations(activePreset, surfaceResults, placedLights, productsData);
 
       // 4. Build Multi-Surface PDF
       await generatePDFReport({

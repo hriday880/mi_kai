@@ -11,13 +11,14 @@ export interface Flag {
 export interface RecommendationResult {
   status: 'under' | 'optimal' | 'over';
   targetRange: [number, number];
+  targetLux: number;
   message: string;
   flags: Flag[];
 }
 
 export function generateRecommendations(
   roomId: string,
-  averageLux: number,
+  surfaceResults: any[],
   lights: any[], // PlacedLight array
   productsData: any[] // full catalogue
 ): RecommendationResult {
@@ -25,6 +26,10 @@ export function generateRecommendations(
   const standard = (luxStandards as any)[roomId];
   const targetMin = standard ? standard.min : 100;
   const targetMax = standard ? standard.max : 300;
+  const targetLux = targetMin; // Primary target for surface verdicts
+
+  const floorResult = surfaceResults.find(s => s.name.toLowerCase().includes('floor')) || surfaceResults[0];
+  const averageLux = floorResult ? floorResult.average : 0;
 
   let status: 'under' | 'optimal' | 'over' = 'optimal';
   let message = "Your lighting design meets recommended standards.";
@@ -35,21 +40,22 @@ export function generateRecommendations(
   } else if (averageLux < targetMin) {
     status = 'under';
     message = `Your room is receiving ${Math.round(averageLux)} lx. Recommended minimum is ${targetMin} lx. Consider adding more fixtures.`;
-    flags.push({
-      severity: 'warning',
-      code: 'UNDER_LIT',
-      title: 'Insufficient Lighting',
-      detail: message
-    });
   } else if (averageLux > targetMax * 1.5) {
     status = 'over';
-    message = `Your room is receiving ${Math.round(averageLux)} lx, which is very bright. Consider reducing the number of fixtures or lowering their intensity.`;
-    flags.push({
-      severity: 'info',
-      code: 'OVER_LIT',
-      title: 'Excessively Bright',
-      detail: message
-    });
+    
+    // Check wall status
+    const walls = surfaceResults.filter(s => s.name.toLowerCase().includes('wall'));
+    const wallTarget = 75;
+    const overlitWalls = walls.filter(w => w.average > wallTarget * 1.5);
+    const darkWalls = walls.filter(w => w.average < wallTarget * 0.5);
+
+    if (overlitWalls.length > 0) {
+      message = `Your room is receiving ${Math.round(averageLux)} lx, which is very bright for a ${roomId}. Your walls are also overlit, likely due to fixtures placed too close to them. Consider reducing the number of fixtures or redirecting them away from the walls.`;
+    } else if (darkWalls.length > 0) {
+      message = `Your room is receiving ${Math.round(averageLux)} lx, which is very bright for a ${roomId}. However, your walls remain dark. Consider reducing the number of ambient downlights and adding dedicated wall-washers or accent fixtures to balance the space.`;
+    } else {
+      message = `Your room is receiving ${Math.round(averageLux)} lx, which is very bright for a ${roomId}. Consider reducing the overall number of fixtures or lowering their intensity.`;
+    }
   }
 
   // Check for mixed color temperatures
@@ -67,9 +73,8 @@ export function generateRecommendations(
     }
   }
 
-  // Dummy check for indoor/outdoor flag
-  // Once we add IP rating to products.json this can be fully realized
-  const isOutdoorRoom = roomId === 'outdoor';
+  // Check for outdoor/balcony/garden rooms needing IP-rated fixtures
+  const isOutdoorRoom = roomId === 'outdoor' || roomId === 'balcony' || roomId === 'garden';
   if (isOutdoorRoom && lights.length > 0) {
     flags.push({
       severity: 'warning',
@@ -82,6 +87,7 @@ export function generateRecommendations(
   return {
     status,
     targetRange: [targetMin, targetMax],
+    targetLux,
     message,
     flags
   };

@@ -46,16 +46,25 @@ export function calculateLuxAtPoint(
     const cosThetaBeam = -dy / distance;
     if (cosThetaBeam <= 0) continue; // point must be below the light
 
-    // Check if point is inside the beam angle cone
+    // Check if point is inside the beam angle cone or field cone
     const beamAngleRad = (light.beamAngle / 2) * (Math.PI / 180);
-    if (Math.acos(cosThetaBeam) > beamAngleRad) {
-      continue; // outside the cone
+    const thetaBeam = Math.acos(cosThetaBeam);
+    let intensityMultiplier = 1;
+    
+    if (thetaBeam > beamAngleRad) {
+      // Create a smooth roll-off field angle (50% wider than beam)
+      const fieldAngle = beamAngleRad * 1.5;
+      if (thetaBeam > fieldAngle) continue;
+      
+      // Smoothstep interpolation from 1.0 down to 0.0 at the field edge
+      const t = (thetaBeam - beamAngleRad) / (fieldAngle - beamAngleRad);
+      intensityMultiplier = Math.max(0, 1 - (t * t * (3 - 2 * t)));
     }
 
     const candela = estimateCandela(light.wattage, light.beamAngle);
 
-    // E = (I / d^2) * cos(theta_incidence)
-    const lux = (candela / distanceSq) * cosThetaInc;
+    // E = (I / d^2) * cos(theta_incidence) * edge_falloff
+    const lux = (candela / distanceSq) * cosThetaInc * intensityMultiplier;
     totalLux += lux;
   }
 
@@ -91,6 +100,11 @@ export function calculateSurfaceLux(
   let count = 0;
   let min = Infinity;
   let max = 0;
+  
+  // Calculate a realistic ambient bounce baseline (roughly 1.5% of total lumens per m2)
+  const totalWatts = lights.reduce((sum, l) => sum + l.wattage, 0);
+  // Approx 1.5 lx per installed Watt for a typical small room ambient scatter
+  const ambientLux = totalWatts > 0 ? (totalWatts * 1.5) : 0;
 
   const cols = Math.max(1, Math.ceil(surface.width / gridSize));
   const rows = Math.max(1, Math.ceil(surface.length / gridSize));
@@ -102,7 +116,10 @@ export function calculateSurfaceLux(
       const py = surface.origin[1] + (c * surface.uVector[1]) + (r * surface.vVector[1]);
       const pz = surface.origin[2] + (c * surface.uVector[2]) + (r * surface.vVector[2]);
       
-      const lux = calculateLuxAtPoint(px, py, pz, surface.normal[0], surface.normal[1], surface.normal[2], lights);
+      const directLux = calculateLuxAtPoint(px, py, pz, surface.normal[0], surface.normal[1], surface.normal[2], lights);
+      
+      // Total lux is direct + ambient
+      const lux = directLux + (ambientLux * 0.5); // Walls get slightly less ambient than floor, but we apply universally here for baseline
       
       heatmap[r][c] = lux;
       sum += lux;

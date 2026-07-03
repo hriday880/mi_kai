@@ -2,5 +2,7 @@
   "bedroom": { "min": 100, "max": 150, "label": "Bedroom" },
   "bathroom": { "min": 200, "max": 300, "label": "Bathroom" },
   "kitchen": { "min": 300, "max": 500, "label": "Kitchen" },
+  "balcony": { "min": 50, "max": 100, "label": "Balcony" },
+  "garden": { "min": 30, "max": 75, "label": "Garden" },
   "outdoor": { "min": 50, "max": 100, "label": "Outdoor / Patio" }
 }

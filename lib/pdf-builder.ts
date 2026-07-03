@@ -5,17 +5,40 @@ import { SurfaceResult, generateHeatmapDataURL } from './lux-calculator';
 
 function getSurfaceStatus(surface: SurfaceResult, mainTargetLux: number) {
   const isFloor = surface.name.toLowerCase().includes('floor');
+  const isCeiling = surface.name.toLowerCase().includes('ceiling');
+  
+  if (isCeiling) {
+    return { status: 'INFO', message: 'Ceiling illuminance typically relies on indirect bounces or uplighting, which are not calculated in this direct-light simulation.' };
+  }
+  
   const target = isFloor ? mainTargetLux : 75; // 75 lux is a standard baseline for vertical walls
   const uniformity = surface.average > 0 ? (surface.min / surface.average) : 0;
   
-  if (surface.average >= target * 0.9 && uniformity >= 0.1) {
-    return { status: 'OPTIMAL', message: `Surface meets target illuminance (>= ${Math.round(target * 0.9)}lx) with good uniformity.` };
+  if (surface.average > target * 1.5) {
+    return { status: 'OVERLIT', message: `Surface is significantly brighter than target (~${target}lx). Consider reducing wattage or fixture count.` };
   }
+  
+  if (surface.average >= target * 0.85) {
+    if (uniformity >= 0.1) {
+      return { status: 'OPTIMAL', message: `Surface meets target illuminance with acceptable uniformity.` };
+    } else {
+      return { status: 'POOR UNIFORMITY', message: `Surface meets average lux target, but has dark spots (Emin: ${Math.round(surface.min)}lx).` };
+    }
+  }
+  
   if (surface.average >= target * 0.5) {
     return { status: 'SUBOPTIMAL', message: `Surface is slightly underlit. Target is ~${target}lx.` };
   }
-  return { status: 'POOR', message: `Surface is severely underlit or has poor uniformity.` };
+  
+  return { status: 'POOR', message: `Surface is severely underlit. Target is ~${target}lx.` };
 }
+
+const REFLECTOR_COLORS = [
+  { name: 'Matte Black', hex: '#1a1a1a' },
+  { name: 'Matte White', hex: '#f0f0f0' },
+  { name: 'Champagne Gold', hex: '#d4af37' },
+  { name: 'Chrome', hex: '#e0e0e0' }
+];
 
 export async function generatePDFReport({
   roomId,
@@ -60,7 +83,7 @@ export async function generatePDFReport({
   const addFooter = (pageNumber: number) => {
     doc.setTextColor(150, 150, 150);
     doc.setFontSize(9);
-    doc.text(`Mi-KAI Light Studio - Page ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+    doc.text(`MI-KAI LIGHT STUDIO - Page ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
   };
 
   let pageNum = 1;
@@ -75,24 +98,24 @@ export async function generatePDFReport({
   
   doc.setFontSize(11);
   doc.setFont("helvetica", "normal");
-  doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 15, 48);
+  doc.text(`Generated on: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`, 15, 48);
   doc.text(`Room Type: ${roomId.toUpperCase()}`, 15, 54);
   doc.text(`Dimensions: ${dimensions.width}m (W) x ${dimensions.length}m (L) x ${dimensions.height || 3}m (H)`, 15, 60);
   
   // Draw Multiple Renders
   if (renderDataUrls && renderDataUrls.length > 0) {
     const mainImg = renderDataUrls[0];
-    doc.addImage(mainImg, 'PNG', 15, 70, pageWidth - 30, 100);
+    doc.addImage(mainImg, 'JPEG', 15, 70, pageWidth - 30, 100, '', 'FAST');
     doc.setDrawColor(212, 175, 55);
     doc.setLineWidth(0.5);
     doc.rect(15, 70, pageWidth - 30, 100);
 
     if (renderDataUrls.length >= 3) {
       const subWidth = (pageWidth - 35) / 2;
-      doc.addImage(renderDataUrls[1], 'PNG', 15, 175, subWidth, 75);
+      doc.addImage(renderDataUrls[1], 'JPEG', 15, 175, subWidth, 75, '', 'FAST');
       doc.rect(15, 175, subWidth, 75);
       
-      doc.addImage(renderDataUrls[2], 'PNG', 20 + subWidth, 175, subWidth, 75);
+      doc.addImage(renderDataUrls[2], 'JPEG', 20 + subWidth, 175, subWidth, 75, '', 'FAST');
       doc.rect(20 + subWidth, 175, subWidth, 75);
     }
   }
@@ -110,11 +133,12 @@ export async function generatePDFReport({
     const key = `${light.productId}-${light.wattage}-${light.colorTemp}-${light.reflectorColor}`;
     if (!partsMap.has(key)) {
       const prod = productsData.find(p => p.id === light.productId);
+      const finishName = REFLECTOR_COLORS.find(c => c.hex.toLowerCase() === light.reflectorColor.toLowerCase())?.name || light.reflectorColor;
       partsMap.set(key, {
         name: prod ? prod.category : `Product ${light.productId}`,
         wattage: light.wattage,
         cct: light.colorTemp,
-        finish: light.reflectorColor,
+        finish: finishName,
         quantity: 1,
         totalWatts: light.wattage
       });
@@ -164,13 +188,30 @@ export async function generatePDFReport({
   doc.setFont("helvetica", "normal");
   doc.text(doc.splitTextToSize(recommendation.message, pageWidth - 40), 20, finalY + 14);
 
+  // Render Warnings and Info Flags
+  let yFlag = finalY + 30;
+  recommendation.flags.forEach(flag => {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.setTextColor(flag.severity === 'warning' ? 220 : 100, flag.severity === 'warning' ? 50 : 100, 50);
+    doc.text(`${flag.severity.toUpperCase()}: ${flag.title}`, 15, yFlag);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(50, 50, 50);
+    doc.text(doc.splitTextToSize(flag.detail, pageWidth - 30), 15, yFlag + 6);
+    yFlag += 16;
+  });
+
   addFooter(pageNum++);
 
   // --- MULTIPLE PAGES: SURFACE MAPS ---
   // Create a page for each surface
   for (const surface of surfaceResults) {
-    // ALWAYS generate a page for every surface included in the room, 
-    // even if it has 0 lux, as per standard DIALux behavior.
+    // Skip the ceiling page from the PDF report entirely
+    if (surface.name.toLowerCase().includes('ceiling')) {
+      continue;
+    }
     
     doc.addPage();
     addHeader(`Illuminance Map: ${surface.name}`);
@@ -183,17 +224,21 @@ export async function generatePDFReport({
 
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text(`Em: ${Math.round(surface.average)} lx`, 120, 40);
-    doc.text(`Emin: ${Math.round(surface.min)} lx`, 155, 40);
+    const roundedAvg = Math.round(surface.average);
+    const roundedMin = Math.round(surface.min);
+    
+    doc.text(`Em: ${roundedAvg} lx`, 120, 40);
+    doc.text(`Emin: ${roundedMin} lx`, 155, 40);
     doc.text(`Emax: ${Math.round(surface.max)} lx`, 120, 45);
-    const uniformity = surface.average > 0 ? (surface.min / surface.average).toFixed(2) : '0.00';
+    const uniformity = roundedAvg > 0 ? (roundedMin / roundedAvg).toFixed(2) : '0.00';
     doc.text(`U0: ${uniformity}`, 155, 45);
 
     // Surface Status Box
     const surfVerdict = getSurfaceStatus(surface, recommendation.targetLux);
-    doc.setFillColor(surfVerdict.status === 'OPTIMAL' ? 230 : 255, surfVerdict.status === 'SUBOPTIMAL' ? 230 : 255, surfVerdict.status === 'POOR' ? 230 : 255);
     if (surfVerdict.status === 'OPTIMAL') doc.setFillColor(230, 255, 230); // light green
     else if (surfVerdict.status === 'SUBOPTIMAL') doc.setFillColor(255, 245, 230); // light orange
+    else if (surfVerdict.status === 'OVERLIT') doc.setFillColor(255, 255, 210); // light yellow
+    else if (surfVerdict.status === 'INFO') doc.setFillColor(240, 240, 245); // light blue-gray
     else doc.setFillColor(255, 230, 230); // light red
     
     doc.rect(15, 52, pageWidth - 30, 15, 'F');
@@ -205,7 +250,8 @@ export async function generatePDFReport({
     doc.text(surfVerdict.message, 20, 63);
 
     // Draw Heatmap Image FIRST so grid draws on top
-    const heatmapDataUrl = generateHeatmapDataURL(surface.heatmap, 500);
+    const actualMaxLux = surface.max > 0 ? surface.max : 1; // Prevent division by zero
+    const heatmapDataUrl = generateHeatmapDataURL(surface.heatmap, actualMaxLux);
     const gridStartX = 15;
     const gridStartY = 75; // Moved down to accommodate status box
     const maxBoxWidth = pageWidth - 30;
