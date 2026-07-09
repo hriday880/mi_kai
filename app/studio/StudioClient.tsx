@@ -17,6 +17,19 @@ import * as THREE from 'three';
 import { useLanguage } from '../../lib/LanguageContext';
 
 // Helper to switch camera views
+function mToFtIn(m: number): { ft: number, in: number } {
+  const totalIn = m * 39.3701;
+  const ft = Math.floor(totalIn / 12);
+  const inc = Math.round(totalIn % 12);
+  // Handle edge case where rounding inches hits 12
+  if (inc === 12) return { ft: ft + 1, in: 0 };
+  return { ft, in: inc };
+}
+
+function ftInToM(ft: number, inc: number): number {
+  return ((ft * 12) + inc) / 39.3701;
+}
+
 function CameraController({ viewMode }: { viewMode: string }) {
   const { camera } = useThree();
   useEffect(() => {
@@ -217,6 +230,18 @@ export default function StudioClient() {
   const [selectedLightId, setSelectedLightId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [renderDataUrl, setRenderDataUrl] = useState<string>('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loginForm, setLoginForm] = useState({ username: '', password: '', error: '' });
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loginForm.username.toLowerCase() === 'jain traders' && loginForm.password === 'Mi_Kai_2026') {
+      setIsAuthenticated(true);
+      setLoginForm({ ...loginForm, error: '' });
+    } else {
+      setLoginForm({ ...loginForm, error: 'Invalid username or password' });
+    }
+  };
 
   const currentPreset = roomPresetsData[activePreset];
 
@@ -227,9 +252,22 @@ export default function StudioClient() {
     setSelectedLightId(null);
   };
 
-  const handleDimensionChange = (axis: 'width' | 'length' | 'height', value: number) => {
-    if (value > 0) {
-      setDimensions(prev => ({ ...prev, [axis]: value }));
+  const handleFtInChange = (axis: 'width' | 'length' | 'height', type: 'ft' | 'in', value: number) => {
+    const current = mToFtIn(dimensions[axis]);
+    let ft = type === 'ft' ? value : current.ft;
+    let inc = type === 'in' ? value : current.in;
+    
+    // Auto-carry inches to feet if >= 12, or just allow it (standard is to carry)
+    if (inc >= 12) {
+      ft += Math.floor(inc / 12);
+      inc = inc % 12;
+    }
+    if (ft < 0) ft = 0;
+    if (inc < 0) inc = 0;
+    
+    const newM = ftInToM(ft, inc);
+    if (newM > 0) {
+      setDimensions(prev => ({ ...prev, [axis]: newM }));
     }
   };
 
@@ -379,6 +417,40 @@ export default function StudioClient() {
     setIsGenerating(false);
   };
 
+  if (!isAuthenticated) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', backgroundColor: '#000', color: '#fff', flexDirection: 'column' }}>
+        <div style={{ background: '#111', padding: '2rem', borderRadius: '8px', border: '1px solid #333', width: '100%', maxWidth: '400px' }}>
+          <h1 style={{ textAlign: 'center', marginBottom: '1.5rem', color: '#d4af37', fontSize: '1.5rem', fontWeight: 300 }}>Mi-KAI Studio Access</h1>
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <label style={{ fontSize: '0.8rem', color: '#888' }}>Username</label>
+              <input 
+                type="text" 
+                value={loginForm.username} 
+                onChange={e => setLoginForm({...loginForm, username: e.target.value})}
+                style={{ padding: '0.75rem', background: '#222', border: '1px solid #333', color: '#fff', borderRadius: '4px' }}
+              />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <label style={{ fontSize: '0.8rem', color: '#888' }}>Password</label>
+              <input 
+                type="password" 
+                value={loginForm.password} 
+                onChange={e => setLoginForm({...loginForm, password: e.target.value})}
+                style={{ padding: '0.75rem', background: '#222', border: '1px solid #333', color: '#fff', borderRadius: '4px' }}
+              />
+            </div>
+            {loginForm.error && <p style={{ color: '#ff4444', fontSize: '0.8rem', margin: 0 }}>{loginForm.error}</p>}
+            <button type="submit" style={{ padding: '0.75rem', background: '#d4af37', color: '#000', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', marginTop: '0.5rem' }}>
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className={styles.sidebar}>
@@ -407,33 +479,81 @@ export default function StudioClient() {
         <div className={styles.section}>
           <h2>{t('studio.roomDimensions')}</h2>
           <div className={styles.dimensions} style={{ marginBottom: '1rem' }}>
+            
+            {/* WIDTH INPUT */}
             <div className={styles.inputGroup}>
               <label>{t('studio.width')}</label>
-              <input 
-                type="number" 
-                step="0.5" 
-                value={dimensions.width}
-                onChange={(e) => handleDimensionChange('width', parseFloat(e.target.value))}
-              />
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', background: '#222', border: '1px solid #333', borderRadius: '4px', paddingRight: '0.5rem', flex: 1 }}>
+                  <input 
+                    type="number" step="1" min="0"
+                    value={mToFtIn(dimensions.width).ft}
+                    onChange={(e) => handleFtInChange('width', 'ft', parseInt(e.target.value) || 0)}
+                    style={{ border: 'none', background: 'transparent', flex: 1, minWidth: 0 }}
+                  />
+                  <span style={{ color: '#888', fontSize: '0.8rem' }}>ft</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', background: '#222', border: '1px solid #333', borderRadius: '4px', paddingRight: '0.5rem', flex: 1 }}>
+                  <input 
+                    type="number" step="1" min="0" max="11"
+                    value={mToFtIn(dimensions.width).in}
+                    onChange={(e) => handleFtInChange('width', 'in', parseInt(e.target.value) || 0)}
+                    style={{ border: 'none', background: 'transparent', flex: 1, minWidth: 0 }}
+                  />
+                  <span style={{ color: '#888', fontSize: '0.8rem' }}>in</span>
+                </div>
+              </div>
             </div>
+
+            {/* LENGTH INPUT */}
             <div className={styles.inputGroup}>
               <label>{t('studio.length')}</label>
-              <input 
-                type="number" 
-                step="0.5" 
-                value={dimensions.length}
-                onChange={(e) => handleDimensionChange('length', parseFloat(e.target.value))}
-              />
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', background: '#222', border: '1px solid #333', borderRadius: '4px', paddingRight: '0.5rem', flex: 1 }}>
+                  <input 
+                    type="number" step="1" min="0"
+                    value={mToFtIn(dimensions.length).ft}
+                    onChange={(e) => handleFtInChange('length', 'ft', parseInt(e.target.value) || 0)}
+                    style={{ border: 'none', background: 'transparent', flex: 1, minWidth: 0 }}
+                  />
+                  <span style={{ color: '#888', fontSize: '0.8rem' }}>ft</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', background: '#222', border: '1px solid #333', borderRadius: '4px', paddingRight: '0.5rem', flex: 1 }}>
+                  <input 
+                    type="number" step="1" min="0" max="11"
+                    value={mToFtIn(dimensions.length).in}
+                    onChange={(e) => handleFtInChange('length', 'in', parseInt(e.target.value) || 0)}
+                    style={{ border: 'none', background: 'transparent', flex: 1, minWidth: 0 }}
+                  />
+                  <span style={{ color: '#888', fontSize: '0.8rem' }}>in</span>
+                </div>
+              </div>
             </div>
+
+            {/* HEIGHT INPUT */}
             {currentPreset.hasCeiling && (
               <div className={styles.inputGroup}>
                 <label>{t('studio.height')}</label>
-                <input 
-                  type="number" 
-                  step="0.1" 
-                  value={dimensions.height}
-                  onChange={(e) => handleDimensionChange('height', parseFloat(e.target.value))}
-                />
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', background: '#222', border: '1px solid #333', borderRadius: '4px', paddingRight: '0.5rem', flex: 1 }}>
+                    <input 
+                      type="number" step="1" min="0"
+                      value={mToFtIn(dimensions.height).ft}
+                      onChange={(e) => handleFtInChange('height', 'ft', parseInt(e.target.value) || 0)}
+                      style={{ border: 'none', background: 'transparent', flex: 1, minWidth: 0 }}
+                    />
+                    <span style={{ color: '#888', fontSize: '0.8rem' }}>ft</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', background: '#222', border: '1px solid #333', borderRadius: '4px', paddingRight: '0.5rem', flex: 1 }}>
+                    <input 
+                      type="number" step="1" min="0" max="11"
+                      value={mToFtIn(dimensions.height).in}
+                      onChange={(e) => handleFtInChange('height', 'in', parseInt(e.target.value) || 0)}
+                      style={{ border: 'none', background: 'transparent', flex: 1, minWidth: 0 }}
+                    />
+                    <span style={{ color: '#888', fontSize: '0.8rem' }}>in</span>
+                  </div>
+                </div>
               </div>
             )}
           </div>

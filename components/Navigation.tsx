@@ -20,7 +20,6 @@ export default function Navigation() {
 
   const navLinks = [
     { key: 'nav.catalogue', href: '/catalogue', isExternal: true },
-    { key: 'nav.studio', href: '/studio', isExternal: true },
     { key: 'nav.theHouse', href: '#the-house' },
     { key: 'nav.theExperience', href: '#the-experience' },
     { key: 'nav.theCraft', href: '#the-craft' },

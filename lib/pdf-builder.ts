@@ -105,7 +105,20 @@ export async function generatePDFReport({
   const locale = lang === 'jp' ? 'ja-JP' : lang === 'cn' ? 'zh-CN' : 'en-US';
   doc.text(`${t('pdf.generatedOn')}: ${new Date().toLocaleDateString(locale, { month: 'long', day: 'numeric', year: 'numeric' })}`, 15, 48);
   doc.text(`${t('pdf.roomType')}: ${roomId.toUpperCase()}`, 15, 54);
-  doc.text(`${t('pdf.dimensions')}: ${dimensions.width}m (W) x ${dimensions.length}m (L) x ${dimensions.height || 3}m (H)`, 15, 60);
+
+  const mToFtIn = (m: number) => {
+    const totalIn = m * 39.3701;
+    const ft = Math.floor(totalIn / 12);
+    const inc = Math.round(totalIn % 12);
+    if (inc === 12) return `${ft + 1}' 0"`;
+    return `${ft}' ${inc}"`;
+  };
+  
+  const wStr = mToFtIn(dimensions.width);
+  const lStr = mToFtIn(dimensions.length);
+  const hStr = mToFtIn(dimensions.height || 3);
+  
+  doc.text(`${t('pdf.dimensions')}: ${wStr} (W) x ${lStr} (L) x ${hStr} (H)`, 15, 60);
   
   // Draw Multiple Renders
   if (renderDataUrls && renderDataUrls.length > 0) {
