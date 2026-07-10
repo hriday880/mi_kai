@@ -1,14 +1,12 @@
 /** @type {import('next').NextConfig} */
-const basePath = process.env.NODE_ENV === 'production' ? '/mi_kai' : '';
 
 const nextConfig = {
   output: 'standalone',
   images: {
     unoptimized: true,
   },
-  basePath,
   env: {
-    NEXT_PUBLIC_BASE_PATH: basePath,
+    NEXT_PUBLIC_BASE_PATH: '',
   },
 };
 
