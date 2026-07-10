@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+import ImageWithLoading from '@/components/ImageWithLoading';
 import Link from 'next/link';
 import { useLanguage } from '@/lib/LanguageContext';
 import styles from './page.module.css';
@@ -44,7 +44,7 @@ export default function ProductClient({ product }: { product: Product }) {
       {/* Hero Image */}
       <section className={styles.heroSection}>
         <div className={styles.imageWrapper}>
-          <Image 
+          <ImageWithLoading 
             src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/images/products/${product.id}-main.png`}
             alt={`Product ${product.id}`}
             fill

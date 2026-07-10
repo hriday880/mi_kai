@@ -3,7 +3,7 @@
 import styles from './page.module.css';
 import products from '@/data/products.json';
 import Link from 'next/link';
-import Image from 'next/image';
+import ImageWithLoading from '@/components/ImageWithLoading';
 import { useLanguage } from '@/lib/LanguageContext';
 
 export default function CataloguePage() {
@@ -23,7 +23,7 @@ export default function CataloguePage() {
           <Link href={`/catalogue/${product.id}`} key={product.id} className={styles.card}>
             <article>
               <div className={styles.imageWrapper}>
-                <Image
+                <ImageWithLoading
                   src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/images/products/${product.id}-main.png`}
                   alt={`Product ${product.id}`}
                   fill
