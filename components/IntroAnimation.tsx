@@ -387,6 +387,13 @@ export default function IntroAnimation() {
         className={styles.canvas}
       />
 
+      {phase === 'loading' && (
+        <div className={styles.loadingOverlay}>
+          <div className={styles.spinner}></div>
+          <div className={styles.loadingText}>LOADING THE EXPERIENCE...</div>
+        </div>
+      )}
+
       {/* UI overlay */}
       <div className={`${styles.uiContent} ${phase === 'ready' ? styles.uiReady : ''}`}>
         <p className={styles.tagline}>

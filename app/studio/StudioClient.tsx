@@ -560,18 +560,21 @@ export default function StudioClient() {
           {currentPreset.hasCeiling && (
             <div className={styles.inputGroup}>
               <label>Wall Color</label>
-              <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-                {['#eeeeee', '#a3b1c6', '#8e7f72', '#2a2a2a'].map(color => (
-                  <div 
-                    key={color}
-                    onClick={() => setWallColor(color)}
-                    style={{ 
-                      width: '24px', height: '24px', backgroundColor: color, 
-                      borderRadius: '50%', cursor: 'pointer',
-                      border: wallColor === color ? '2px solid #d4af37' : '1px solid #333'
-                    }}
-                  />
-                ))}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
+                <input 
+                  type="color"
+                  value={wallColor}
+                  onChange={(e) => setWallColor(e.target.value)}
+                  style={{ 
+                    width: '36px', height: '36px', 
+                    padding: 0, margin: 0,
+                    border: '1px solid #333', borderRadius: '4px', 
+                    cursor: 'pointer', background: 'transparent'
+                  }}
+                />
+                <span style={{ color: '#888', fontSize: '0.8rem', fontFamily: 'monospace', textTransform: 'uppercase' }}>
+                  {wallColor}
+                </span>
               </div>
             </div>
           )}
