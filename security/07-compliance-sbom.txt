@@ -1,0 +1,11 @@
+# Compliance and SBOM
+## Overview
+Inventory of open-source licenses and open dependencies.
+
+## Findings
+- The project uses standard MIT/Apache-2.0 licensed libraries typical in the React/Next.js ecosystem.
+- No copyleft licenses (e.g., GPL) were immediately identified that would enforce open-sourcing of proprietary code.
+
+## Recommendations
+- Generate a formal Software Bill of Materials (SBOM) using tools like Syft during the CI pipeline.
+- Regularly review licensing of newly added dependencies to ensure compliance with company policies.

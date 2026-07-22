@@ -82,15 +82,15 @@
 
 /* Fallback gradients if images fail to load */
 .imgBedroom {
-  background-image: url('/images/bedroom.png'), linear-gradient(45deg, #1a1510, #2a2520);
+  background-image: url('/images/bedroom.jpg'), linear-gradient(45deg, #1a1510, #2a2520);
 }
 
 .imgLiving {
-  background-image: url('/images/living.png'), linear-gradient(135deg, #0a0a0a, #1f1b13);
+  background-image: url('/images/living.jpg'), linear-gradient(135deg, #0a0a0a, #1f1b13);
 }
 
 .imgWorkspace {
-  background-image: url('/images/workspace.png'), linear-gradient(to bottom, #111111, #221d15);
+  background-image: url('/images/workspace.jpg'), linear-gradient(to bottom, #111111, #221d15);
 }
 
 .card:hover .imagePlaceholder {

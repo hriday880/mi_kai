@@ -4,9 +4,9 @@ import { useEffect, useRef } from 'react';
 import { useLanguage } from '@/lib/LanguageContext';
 import styles from './TheLiving.module.css';
 
-import bedroomImg from '@/public/images/bedroom.png';
-import livingImg from '@/public/images/living.png';
-import workspaceImg from '@/public/images/workspace.png';
+import bedroomImg from '@/public/images/bedroom.jpg';
+import livingImg from '@/public/images/living.jpg';
+import workspaceImg from '@/public/images/workspace.jpg';
 
 import DynamicLightImage from './DynamicLightImage';
 

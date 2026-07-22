@@ -1,0 +1,11 @@
+# Container Security
+## Overview
+Audit of Dockerfile layers, base image pinning, user privileges, and build args.
+
+## Findings
+- No Dockerfile is currently present in the root directory.
+
+## Recommendations
+- When containerizing the Next.js application, use a distroless or Alpine base image.
+- Avoid running the application as the root user. Create a dedicated `node` user.
+- Do not bake secrets into the container image using build arguments; pass them at runtime via environment variables.

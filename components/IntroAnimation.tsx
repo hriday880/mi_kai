@@ -40,11 +40,8 @@ export default function IntroAnimation() {
 
   // ── Initialize Three.js scene ──────────────────────────────
   useEffect(() => {
-    const played = sessionStorage.getItem('mikai-intro-played');
-    if (played === 'true') {
-      setPhase('done');
-      return;
-    }
+      // We always show the loading animation and intro now
+      // (Removed sessionStorage check so user can see the intro and loading animation)
 
     let disposed = false;
 
@@ -110,12 +107,12 @@ export default function IntroAnimation() {
         return tex;
       };
 
-      const texFront  = loadTex('/box/face_1.png');
-      const texBack   = loadTex('/box/face_2.png');
-      const texRight  = loadTex('/box/face_3.png');
-      const texLeft   = loadTex('/box/face_4.png');
-      const texBottom = loadTex('/box/face_5.png');
-      const texTop    = loadTex('/box/face_0.png');
+      const texFront  = loadTex('/box/face_1.jpg');
+      const texBack   = loadTex('/box/face_2.jpg');
+      const texRight  = loadTex('/box/face_3.jpg');
+      const texLeft   = loadTex('/box/face_4.jpg');
+      const texBottom = loadTex('/box/face_5.jpg');
+      const texTop    = loadTex('/box/face_0.jpg');
 
       // ─ Materials
       const matSide = (tex: THREE.Texture) => new THREE.MeshStandardMaterial({

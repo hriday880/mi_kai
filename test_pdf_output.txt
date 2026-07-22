@@ -1,0 +1,5 @@
+Number of images: 1
+Number of drawings: 0
+
+Items in top left quadrant (0, 0, 200, 200):
+Image in top left: (0.0, 0.0, 1191.1199951171875, 842.4000244140625)

@@ -1,0 +1,12 @@
+# SAST Audit Report
+## Overview
+Static Application Security Testing (SAST) was performed against the Next.js codebase.
+
+## Findings
+- React dangerouslySetInnerHTML: No instances found.
+- Unsanitized input in API routes: Moderate risk if request parameters are passed directly to downstream services.
+- Hardcoded sensitive values: None detected in the static audit.
+
+## Recommendations
+- Enforce strict typing with TypeScript to avoid runtime type manipulation.
+- Continue using ESLint security plugins (eslint-plugin-security).

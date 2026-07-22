@@ -28,6 +28,10 @@ export function generateRecommendations(
   const targetMax = standard ? standard.max : 300;
   const targetLux = targetMin; // Primary target for surface verdicts
 
+  if (!surfaceResults || surfaceResults.length === 0) {
+    return { status: 'under', targetRange: [targetMin, targetMax], targetLux, message: t('pdf.recommender.noData') || 'No data', flags: [] };
+  }
+
   const floorResult = surfaceResults.find(s => s.name.toLowerCase().includes('floor')) || surfaceResults[0];
   const averageLux = floorResult ? floorResult.average : 0;
 

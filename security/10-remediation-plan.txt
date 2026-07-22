@@ -1,0 +1,16 @@
+# Remediation Plan
+## Overview
+Actionable, prioritized patch checklist based on the 9 security aspects.
+
+## High Priority
+1. Implement server-side input validation for all API endpoints using Zod.
+2. Review and update outdated npm dependencies showing known vulnerabilities.
+
+## Medium Priority
+3. Introduce rate limiting on all public-facing Next.js API routes.
+4. Ensure all session cookies are flagged with Secure and HttpOnly attributes.
+5. Set up an automated CI/CD pipeline step to generate an SBOM and scan for secrets on PRs.
+
+## Low Priority
+6. Add a Dockerfile following security best practices (non-root user, multi-stage build) if containerized deployment is planned.
+7. Conduct a formal STRIDE threat modeling workshop with the engineering team.

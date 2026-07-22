@@ -142,19 +142,23 @@ export default function DynamicLightImage({ src }: { src: string }) {
       
       {/* Color Picker UI */}
       <div className={`${styles.colorPicker} ${isHovered ? styles.colorPickerVisible : ''}`}>
-        {COLORS.map((color) => (
-          <button
-            key={color.hex}
-            className={`${styles.colorBtn} ${lightColor === color.hex ? styles.colorBtnActive : ''}`}
-            style={{ backgroundColor: color.hex }}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setLightColor(color.hex);
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.5)', padding: '6px 12px', borderRadius: '20px', backdropFilter: 'blur(4px)' }}>
+          <input
+            type="color"
+            value={lightColor}
+            onChange={(e) => setLightColor(e.target.value)}
+            style={{ 
+              width: '24px', height: '24px', 
+              padding: 0, margin: 0,
+              border: '1px solid rgba(212, 175, 55, 0.5)', borderRadius: '50%', 
+              cursor: 'pointer', background: 'transparent'
             }}
-            aria-label={`Set light to ${color.name}`}
+            aria-label="Set custom light color"
           />
-        ))}
+          <span style={{ color: '#d4af37', fontSize: '0.75rem', fontFamily: 'monospace', textTransform: 'uppercase' }}>
+            {lightColor}
+          </span>
+        </div>
       </div>
     </div>
   );

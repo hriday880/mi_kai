@@ -3,6 +3,19 @@ import autoTable from 'jspdf-autotable';
 import { RecommendationResult } from './recommender';
 import { SurfaceResult, generateHeatmapDataURL } from './lux-calculator';
 
+export interface PlacedLight {
+  productId: string;
+  wattage: number;
+  colorTemp: number;
+  reflectorColor: string;
+}
+
+export interface Product {
+  id: string;
+  category: string;
+  [key: string]: any;
+}
+
 function getSurfaceStatus(surface: SurfaceResult, mainTargetLux: number, t: (key: string) => string) {
   const isFloor = surface.name.toLowerCase().includes('floor');
   const isCeiling = surface.name.toLowerCase().includes('ceiling');
@@ -56,8 +69,8 @@ export async function generatePDFReport({
   renderDataUrls: string[];
   surfaceResults: SurfaceResult[];
   recommendation: RecommendationResult;
-  placedLights: any[]; // from StudioClient PlacedLight
-  productsData: any[];
+  placedLights: PlacedLight[];
+  productsData: Product[];
   lang: string;
   t: (key: string) => string;
 }) {
@@ -147,7 +160,8 @@ export async function generatePDFReport({
   const partsMap = new Map<string, any>();
   let totalPower = 0;
 
-  placedLights.forEach(light => {
+  const validLights = placedLights || [];
+  validLights.forEach(light => {
     const key = `${light.productId}-${light.wattage}-${light.colorTemp}-${light.reflectorColor}`;
     if (!partsMap.has(key)) {
       const prod = productsData.find(p => p.id === light.productId);

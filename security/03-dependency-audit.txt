@@ -1,0 +1,12 @@
+# Dependency Audit Report
+## Overview
+Trivy was used to scan the project dependencies for known vulnerabilities.
+
+## Findings
+- Scanned 1 language-specific file (package-lock.json).
+- Python virtual environment (.venv) was evaluated. No major vulnerabilities immediately exposed.
+
+## Recommendations
+- Run `npm audit fix` periodically.
+- Update outdated Next.js and React packages when non-breaking patch updates are available.
+- Consider utilizing Dependabot or Renovate for automated dependency tracking.

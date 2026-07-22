@@ -1,0 +1,12 @@
+# API Security
+## Overview
+Audit of API endpoints, CORS settings, authentication flows, and request validation logic.
+
+## Findings
+- Next.js API Routes may lack explicit rate limiting out of the box.
+- Default CORS behavior in Next.js restricts cross-origin requests unless explicitly configured.
+
+## Recommendations
+- Implement request validation (e.g., using Zod) for all incoming API payloads.
+- Apply rate limiting middleware to prevent brute-force or DDoS attacks on sensitive endpoints.
+- Ensure all API endpoints that return sensitive data require proper authentication/authorization headers.

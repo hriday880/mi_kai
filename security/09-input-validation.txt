@@ -1,0 +1,12 @@
+# Input Validation
+## Overview
+Review of string parsers, regex efficiency, and sanitization boundaries.
+
+## Findings
+- Unvalidated inputs in search parameters or form submissions pose a risk of XSS or injection.
+- Heavy reliance on client-side validation is insufficient.
+
+## Recommendations
+- Implement a robust schema validation library (e.g., Zod or Yup) on the server side.
+- Sanitize any user input before rendering it to the DOM to prevent Cross-Site Scripting (XSS).
+- Use parameterized queries or ORMs to prevent SQL/NoSQL injection if a database is connected.

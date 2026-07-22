@@ -1,0 +1,11 @@
+# Infrastructure as Code (IaC) Security
+## Overview
+Audit of Terraform, Docker Compose, environment files, and Kubernetes configs.
+
+## Findings
+- No significant IaC configuration (like Terraform or Kubernetes manifests) was found in the root directory.
+- The project primarily relies on standard Next.js deployment models.
+
+## Recommendations
+- If Docker is introduced later, ensure the container runs as a non-root user.
+- If CI/CD pipelines (e.g., GitHub Actions) are used, follow least-privilege principles for secrets and tokens.

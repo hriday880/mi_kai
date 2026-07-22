@@ -1,0 +1,16 @@
+# Threat Model
+## Overview
+STRIDE framework threat model for the application boundaries.
+
+## Threats Identified (STRIDE)
+- Spoofing: Session hijacking if cookies are not secure/HttpOnly.
+- Tampering: Client-side state manipulation before submission to the server.
+- Repudiation: Lack of detailed audit logging for critical administrative actions.
+- Information Disclosure: Stack traces or verbose error messages in production.
+- Denial of Service: Unbounded resource consumption on image optimization or API routes.
+- Elevation of Privilege: Broken access controls leading to unauthorized data access.
+
+## Mitigation
+- Enforce strict authentication.
+- Validate all inputs on the server side.
+- Disable detailed error messages in the production environment.
