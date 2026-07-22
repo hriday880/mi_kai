@@ -2,7 +2,7 @@
 
 import React, { useRef, useMemo, useState, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useTexture, Html, useProgress } from '@react-three/drei';
+import { useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import styles from './DynamicLightImage.module.css';
 
@@ -107,9 +107,15 @@ const DynamicShaderMaterial = ({ texture, lightColor }: { texture: THREE.Texture
   );
 };
 
-const Scene = ({ src, lightColor }: { src: string, lightColor: string }) => {
+const Scene = ({ src, lightColor, onLoad }: { src: string, lightColor: string, onLoad: () => void }) => {
   const texture = useTexture(src);
   const { viewport } = useThree();
+  
+  React.useEffect(() => {
+    if (texture) {
+      onLoad();
+    }
+  }, [texture, onLoad]);
   
   return (
     <mesh>
@@ -129,8 +135,7 @@ const COLORS = [
 export default function DynamicLightImage({ src }: { src: string }) {
   const [lightColor, setLightColor] = useState(COLORS[0].hex);
   const [isHovered, setIsHovered] = useState(false);
-  const { progress, active } = useProgress();
-  const isLoading = active || progress < 100;
+  const [isLoading, setIsLoading] = useState(true);
   
   return (
     <div 
@@ -141,14 +146,11 @@ export default function DynamicLightImage({ src }: { src: string }) {
       {isLoading && (
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 20, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div className={styles.spinner}></div>
-          <div style={{ color: '#d4af37', fontSize: '0.6rem', marginTop: '10px', letterSpacing: '2px' }}>
-            {Math.round(progress)}%
-          </div>
         </div>
       )}
-      <Canvas style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: isLoading ? 0 : 1, transition: 'opacity 0.5s ease' }}>
+      <Canvas style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: isLoading ? 0 : 1, transition: 'opacity 0.8s ease' }}>
         <Suspense fallback={null}>
-          <Scene src={src} lightColor={lightColor} />
+          <Scene src={src} lightColor={lightColor} onLoad={() => setIsLoading(false)} />
         </Suspense>
       </Canvas>
       
