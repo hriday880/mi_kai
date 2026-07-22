@@ -6,17 +6,7 @@ import { useTexture, Html, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
 import styles from './DynamicLightImage.module.css';
 
-function Loader() {
-  const { progress } = useProgress();
-  return (
-    <Html center>
-      <div className={styles.spinner}></div>
-      <div style={{ color: '#d4af37', fontSize: '0.6rem', marginTop: '10px', letterSpacing: '2px' }}>
-        {Math.round(progress)}%
-      </div>
-    </Html>
-  );
-}
+// Using standard HTML overlay for loading instead of Html from drei which crashes Suspense
 
 const DynamicShaderMaterial = ({ texture, lightColor }: { texture: THREE.Texture, lightColor: string }) => {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
@@ -139,6 +129,8 @@ const COLORS = [
 export default function DynamicLightImage({ src }: { src: string }) {
   const [lightColor, setLightColor] = useState(COLORS[0].hex);
   const [isHovered, setIsHovered] = useState(false);
+  const { progress, active } = useProgress();
+  const isLoading = active || progress < 100;
   
   return (
     <div 
@@ -146,8 +138,16 @@ export default function DynamicLightImage({ src }: { src: string }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Canvas style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-        <Suspense fallback={<Loader />}>
+      {isLoading && (
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 20, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className={styles.spinner}></div>
+          <div style={{ color: '#d4af37', fontSize: '0.6rem', marginTop: '10px', letterSpacing: '2px' }}>
+            {Math.round(progress)}%
+          </div>
+        </div>
+      )}
+      <Canvas style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: isLoading ? 0 : 1, transition: 'opacity 0.5s ease' }}>
+        <Suspense fallback={null}>
           <Scene src={src} lightColor={lightColor} />
         </Suspense>
       </Canvas>
