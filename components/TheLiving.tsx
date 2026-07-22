@@ -3,6 +3,9 @@
 import { useEffect, useRef } from 'react';
 import { useLanguage } from '@/lib/LanguageContext';
 import styles from './TheLiving.module.css';
+import bedroomImg from '@/public/images/bedroom.png';
+import livingImg from '@/public/images/living.png';
+import workspaceImg from '@/public/images/workspace.png';
 
 import DynamicLightImage from './DynamicLightImage';
 
@@ -42,7 +45,7 @@ export default function TheLiving() {
           {/* Bedroom Card */}
           <div className={`${styles.card} ${styles.reveal}`}>
             <div className={styles.imagePlaceholder}>
-              <DynamicLightImage src="/images/bedroom.png" />
+              <DynamicLightImage src={bedroomImg.src} />
             </div>
             <div className={styles.cardContent}>
               <h3 className={styles.cardTitle}>{t('theLiving.bedroom')}</h3>
@@ -53,7 +56,7 @@ export default function TheLiving() {
           {/* Living Room Card */}
           <div className={`${styles.card} ${styles.reveal}`} style={{ transitionDelay: '0.1s' }}>
             <div className={styles.imagePlaceholder}>
-              <DynamicLightImage src="/images/living.png" />
+              <DynamicLightImage src={livingImg.src} />
             </div>
             <div className={styles.cardContent}>
               <h3 className={styles.cardTitle}>{t('theLiving.living')}</h3>
@@ -64,7 +67,7 @@ export default function TheLiving() {
           {/* Workspace Card */}
           <div className={`${styles.card} ${styles.reveal}`} style={{ transitionDelay: '0.2s' }}>
             <div className={styles.imagePlaceholder}>
-              <DynamicLightImage src="/images/workspace.png" />
+              <DynamicLightImage src={workspaceImg.src} />
             </div>
             <div className={styles.cardContent}>
               <h3 className={styles.cardTitle}>{t('theLiving.workspace')}</h3>

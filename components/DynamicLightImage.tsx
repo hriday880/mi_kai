@@ -85,8 +85,8 @@ const DynamicShaderMaterial = ({ texture, lightColor }: { texture: THREE.Texture
       vec3 reflectDir = reflect(-lightDir, normal);
       float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
       
-      // Base ambient illumination
-      vec3 ambient = texColor.rgb * 0.4;
+      // Base ambient illumination (cranked up to guarantee visibility)
+      vec3 ambient = texColor.rgb * 0.8;
       
       // Final color = ambient + (diffuse + specular) * lightColor * attenuation
       vec3 lighting = (texColor.rgb * diff * 1.5 + spec * 0.8) * uLightColor * attenuation;
