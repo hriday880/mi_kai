@@ -146,6 +146,7 @@ export default function DynamicLightImage({ src }: { src: string }) {
       {isLoading && (
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 20, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div className={styles.spinner}></div>
+          <div style={{ color: '#d4af37', fontSize: '0.8rem', marginTop: '10px', letterSpacing: '2px' }}>LOADING...</div>
         </div>
       )}
       <Canvas style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: isLoading ? 0 : 1, transition: 'opacity 0.8s ease' }}>
