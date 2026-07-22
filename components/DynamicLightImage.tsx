@@ -73,7 +73,9 @@ const DynamicShaderMaterial = ({ texture, lightColor }: { texture: THREE.Texture
       
       // Calculate distance for light attenuation (falloff)
       float dist = distance(lightPos.xy, surfacePos.xy);
-      float attenuation = smoothstep(0.8, 0.0, dist);
+      // FIX: smoothstep(edge0, edge1) is undefined if edge0 >= edge1 in WebGL/Metal. 
+      // Must use 1.0 - smoothstep(0.0, 0.8) instead of smoothstep(0.8, 0.0).
+      float attenuation = 1.0 - smoothstep(0.0, 0.8, dist);
       
       // Diffuse lighting
       float diff = max(dot(normal, lightDir), 0.0);
