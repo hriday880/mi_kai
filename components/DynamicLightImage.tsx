@@ -2,9 +2,21 @@
 
 import React, { useRef, useMemo, useState, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useTexture } from '@react-three/drei';
+import { useTexture, Html, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
 import styles from './DynamicLightImage.module.css';
+
+function Loader() {
+  const { progress } = useProgress();
+  return (
+    <Html center>
+      <div className={styles.spinner}></div>
+      <div style={{ color: '#d4af37', fontSize: '0.6rem', marginTop: '10px', letterSpacing: '2px' }}>
+        {Math.round(progress)}%
+      </div>
+    </Html>
+  );
+}
 
 const DynamicShaderMaterial = ({ texture, lightColor }: { texture: THREE.Texture, lightColor: string }) => {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
@@ -135,8 +147,8 @@ export default function DynamicLightImage({ src }: { src: string }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <Canvas style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-        <Suspense fallback={null}>
-          <Scene src={src} lightColor={isHovered ? lightColor : '#ffffff'} />
+        <Suspense fallback={<Loader />}>
+          <Scene src={src} lightColor={lightColor} />
         </Suspense>
       </Canvas>
       
