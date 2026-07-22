@@ -44,55 +44,10 @@ const DynamicShaderMaterial = ({ texture, lightColor }: { texture: THREE.Texture
 
   const fragmentShader = `
     uniform sampler2D uTexture;
-    uniform vec2 uMouse;
-    uniform vec3 uLightColor;
-    
     varying vec2 vUv;
-
-    float luminance(vec3 color) {
-      return dot(color, vec3(0.299, 0.587, 0.114));
-    }
-
     void main() {
       vec4 texColor = texture2D(uTexture, vUv);
-      
-      // Sobel-like filter for pseudo-normals based on image brightness
-      float texelSize = 1.0 / 1024.0;
-      float l = luminance(texture2D(uTexture, vUv + vec2(-texelSize, 0.0)).rgb);
-      float r = luminance(texture2D(uTexture, vUv + vec2(texelSize, 0.0)).rgb);
-      float d = luminance(texture2D(uTexture, vUv + vec2(0.0, -texelSize)).rgb);
-      float u = luminance(texture2D(uTexture, vUv + vec2(0.0, texelSize)).rgb);
-      
-      // Construct normal vector from gradients
-      vec3 normal = normalize(vec3((l - r) * 1.5, (d - u) * 1.5, 0.4));
-      
-      // Light properties
-      vec3 lightPos = vec3(uMouse.x, uMouse.y, 0.3); // Light floats slightly above image
-      vec3 surfacePos = vec3(vUv.x, vUv.y, 0.0);
-      vec3 lightDir = normalize(lightPos - surfacePos);
-      
-      // Calculate distance for light attenuation (falloff)
-      float dist = distance(lightPos.xy, surfacePos.xy);
-      // FIX: smoothstep(edge0, edge1) is undefined if edge0 >= edge1 in WebGL/Metal. 
-      // Must use 1.0 - smoothstep(0.0, 0.8) instead of smoothstep(0.8, 0.0).
-      float attenuation = 1.0 - smoothstep(0.0, 0.8, dist);
-      
-      // Diffuse lighting
-      float diff = max(dot(normal, lightDir), 0.0);
-      
-      // Specular highlight
-      vec3 viewDir = vec3(0.0, 0.0, 1.0);
-      vec3 reflectDir = reflect(-lightDir, normal);
-      float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
-      
-      // Base ambient illumination (cranked up to guarantee visibility)
-      vec3 ambient = texColor.rgb * 0.8;
-      
-      // Final color = ambient + (diffuse + specular) * lightColor * attenuation
-      vec3 lighting = (texColor.rgb * diff * 1.5 + spec * 0.8) * uLightColor * attenuation;
-      vec3 finalColor = ambient + lighting;
-      
-      gl_FragColor = vec4(finalColor, texColor.a);
+      gl_FragColor = vec4(texColor.rgb, 1.0);
       
       #include <tonemapping_fragment>
       #include <colorspace_fragment>
