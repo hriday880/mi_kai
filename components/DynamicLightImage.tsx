@@ -44,13 +44,55 @@ const DynamicShaderMaterial = ({ texture, lightColor }: { texture: THREE.Texture
 
   const fragmentShader = `
     uniform sampler2D uTexture;
+    uniform vec2 uMouse;
+    uniform vec3 uLightColor;
+    
     varying vec2 vUv;
+
+    float luminance(vec3 color) {
+      return dot(color, vec3(0.299, 0.587, 0.114));
+    }
+
     void main() {
       vec4 texColor = texture2D(uTexture, vUv);
-      gl_FragColor = vec4(texColor.rgb, 1.0);
       
-      #include <tonemapping_fragment>
-      #include <colorspace_fragment>
+      // Sobel-like filter for pseudo-normals based on image brightness
+      float texelSize = 1.0 / 1024.0;
+      float l = luminance(texture2D(uTexture, vUv + vec2(-texelSize, 0.0)).rgb);
+      float r = luminance(texture2D(uTexture, vUv + vec2(texelSize, 0.0)).rgb);
+      float d = luminance(texture2D(uTexture, vUv + vec2(0.0, -texelSize)).rgb);
+      float u = luminance(texture2D(uTexture, vUv + vec2(0.0, texelSize)).rgb);
+      
+      // Construct normal vector from gradients
+      vec3 normal = normalize(vec3((l - r) * 1.5, (d - u) * 1.5, 0.4));
+      
+      // Light properties
+      vec3 lightPos = vec3(uMouse.x, uMouse.y, 0.3); // Light floats slightly above image
+      vec3 surfacePos = vec3(vUv.x, vUv.y, 0.0);
+      vec3 lightDir = normalize(lightPos - surfacePos);
+      
+      // Calculate distance for light attenuation (falloff)
+      float dist = distance(lightPos.xy, surfacePos.xy);
+      // FIX: safe smoothstep for Apple Silicon
+      float attenuation = 1.0 - smoothstep(0.0, 0.8, dist);
+      
+      // Diffuse lighting
+      float diff = max(dot(normal, lightDir), 0.0);
+      
+      // Specular highlight
+      vec3 viewDir = vec3(0.0, 0.0, 1.0);
+      vec3 reflectDir = reflect(-lightDir, normal);
+      float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+      
+      // Base ambient illumination
+      vec3 ambient = texColor.rgb * 0.4;
+      
+      // Final color = ambient + (diffuse + specular) * lightColor * attenuation
+      vec3 lighting = (texColor.rgb * diff * 1.5 + spec * 0.8) * uLightColor * attenuation;
+      vec3 finalColor = ambient + lighting;
+      
+      // Output raw color directly to prevent missing uniform crashes in Three.js chunks
+      gl_FragColor = vec4(finalColor, texColor.a);
     }
   `;
 
@@ -77,7 +119,7 @@ const Scene = ({ src, lightColor, onLoad }: { src: string, lightColor: string, o
   return (
     <mesh>
       <planeGeometry args={[viewport.width, viewport.height]} /> 
-      <meshBasicMaterial map={texture} toneMapped={true} />
+      <DynamicShaderMaterial texture={texture} lightColor={lightColor} />
     </mesh>
   );
 };
