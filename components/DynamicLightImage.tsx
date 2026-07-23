@@ -77,7 +77,7 @@ const Scene = ({ src, lightColor, onLoad }: { src: string, lightColor: string, o
   return (
     <mesh>
       <planeGeometry args={[viewport.width, viewport.height]} /> 
-      <DynamicShaderMaterial texture={texture} lightColor={lightColor} />
+      <meshBasicMaterial map={texture} toneMapped={true} />
     </mesh>
   );
 };
