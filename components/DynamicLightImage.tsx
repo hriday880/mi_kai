@@ -11,29 +11,6 @@ import styles from './DynamicLightImage.module.css';
 const DynamicShaderMaterial = ({ texture, lightColor }: { texture: THREE.Texture, lightColor: string }) => {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   
-  const uniforms = useMemo(() => ({
-    uTexture: { value: texture },
-    uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-    uLightColor: { value: new THREE.Color(lightColor) },
-  }), [texture]);
-
-  useFrame((state) => {
-    if (materialRef.current) {
-      // Smoothly interpolate light color to target
-      const targetColor = new THREE.Color(lightColor);
-      materialRef.current.uniforms.uLightColor.value.lerp(targetColor, 0.1);
-
-      // Track mouse position
-      // Map pointer (-1 to 1) to UV space (0 to 1)
-      const targetX = (state.pointer.x + 1) / 2;
-      const targetY = (state.pointer.y + 1) / 2;
-      
-      // Smooth follow
-      materialRef.current.uniforms.uMouse.value.x += (targetX - materialRef.current.uniforms.uMouse.value.x) * 0.1;
-      materialRef.current.uniforms.uMouse.value.y += (targetY - materialRef.current.uniforms.uMouse.value.y) * 0.1;
-    }
-  });
-
   const vertexShader = `
     varying vec2 vUv;
     void main() {
@@ -56,54 +33,65 @@ const DynamicShaderMaterial = ({ texture, lightColor }: { texture: THREE.Texture
     void main() {
       vec4 texColor = texture2D(uTexture, vUv);
       
-      // Sobel-like filter for pseudo-normals based on image brightness
       float texelSize = 1.0 / 1024.0;
       float l = luminance(texture2D(uTexture, vUv + vec2(-texelSize, 0.0)).rgb);
       float r = luminance(texture2D(uTexture, vUv + vec2(texelSize, 0.0)).rgb);
       float d = luminance(texture2D(uTexture, vUv + vec2(0.0, -texelSize)).rgb);
       float u = luminance(texture2D(uTexture, vUv + vec2(0.0, texelSize)).rgb);
       
-      // Construct normal vector from gradients
       vec3 normal = normalize(vec3((l - r) * 1.5, (d - u) * 1.5, 0.4));
       
-      // Light properties
-      vec3 lightPos = vec3(uMouse.x, uMouse.y, 0.3); // Light floats slightly above image
+      vec3 lightPos = vec3(uMouse.x, uMouse.y, 0.3);
       vec3 surfacePos = vec3(vUv.x, vUv.y, 0.0);
       vec3 lightDir = normalize(lightPos - surfacePos);
       
-      // Calculate distance for light attenuation (falloff)
       float dist = distance(lightPos.xy, surfacePos.xy);
-      // FIX: safe smoothstep for Apple Silicon
       float attenuation = 1.0 - smoothstep(0.0, 0.8, dist);
       
-      // Diffuse lighting
       float diff = max(dot(normal, lightDir), 0.0);
       
-      // Specular highlight
       vec3 viewDir = vec3(0.0, 0.0, 1.0);
       vec3 reflectDir = reflect(-lightDir, normal);
       float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
       
-      // Base ambient illumination
       vec3 ambient = texColor.rgb * 0.4;
-      
-      // Final color = ambient + (diffuse + specular) * lightColor * attenuation
       vec3 lighting = (texColor.rgb * diff * 1.5 + spec * 0.8) * uLightColor * attenuation;
       vec3 finalColor = ambient + lighting;
       
-      // Output raw color directly to prevent missing uniform crashes in Three.js chunks
       gl_FragColor = vec4(finalColor, texColor.a);
     }
   `;
 
-  return (
-    <shaderMaterial
-      ref={materialRef}
-      vertexShader={vertexShader}
-      fragmentShader={fragmentShader}
-      uniforms={uniforms}
-    />
-  );
+  const material = useMemo(() => {
+    return new THREE.ShaderMaterial({
+      uniforms: {
+        uTexture: { value: texture },
+        uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+        uLightColor: { value: new THREE.Color(lightColor) },
+      },
+      vertexShader,
+      fragmentShader
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [texture]); // Deliberately omit lightColor so we don't recreate material on hover
+
+  useFrame((state) => {
+    if (material) {
+      // Smoothly interpolate light color to target
+      const targetColor = new THREE.Color(lightColor);
+      material.uniforms.uLightColor.value.lerp(targetColor, 0.1);
+
+      // Track mouse position
+      const targetX = (state.pointer.x + 1) / 2;
+      const targetY = (state.pointer.y + 1) / 2;
+      
+      // Smooth follow
+      material.uniforms.uMouse.value.x += (targetX - material.uniforms.uMouse.value.x) * 0.1;
+      material.uniforms.uMouse.value.y += (targetY - material.uniforms.uMouse.value.y) * 0.1;
+    }
+  });
+
+  return <primitive object={material} attach="material" />;
 };
 
 const Scene = ({ src, lightColor, onLoad }: { src: string, lightColor: string, onLoad: () => void }) => {
