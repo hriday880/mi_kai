@@ -8,107 +8,56 @@ import styles from './DynamicLightImage.module.css';
 
 // Using standard HTML overlay for loading instead of Html from drei which crashes Suspense
 
-const DynamicShaderMaterial = ({ texture, lightColor }: { texture: THREE.Texture, lightColor: string }) => {
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
-  
-  const vertexShader = `
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `;
-
-  const fragmentShader = `
-    uniform sampler2D uTexture;
-    uniform vec2 uMouse;
-    uniform vec3 uLightColor;
-    
-    varying vec2 vUv;
-
-    float luminance(vec3 color) {
-      return dot(color, vec3(0.299, 0.587, 0.114));
-    }
-
-    void main() {
-      vec4 texColor = texture2D(uTexture, vUv);
-      
-      float texelSize = 1.0 / 1024.0;
-      float l = luminance(texture2D(uTexture, vUv + vec2(-texelSize, 0.0)).rgb);
-      float r = luminance(texture2D(uTexture, vUv + vec2(texelSize, 0.0)).rgb);
-      float d = luminance(texture2D(uTexture, vUv + vec2(0.0, -texelSize)).rgb);
-      float u = luminance(texture2D(uTexture, vUv + vec2(0.0, texelSize)).rgb);
-      
-      vec3 normal = normalize(vec3((l - r) * 1.5, (d - u) * 1.5, 0.4));
-      
-      vec3 lightPos = vec3(uMouse.x, uMouse.y, 0.3);
-      vec3 surfacePos = vec3(vUv.x, vUv.y, 0.0);
-      vec3 lightDir = normalize(lightPos - surfacePos);
-      
-      float dist = distance(lightPos.xy, surfacePos.xy);
-      float attenuation = 1.0 - smoothstep(0.0, 0.8, dist);
-      
-      float diff = max(dot(normal, lightDir), 0.0);
-      
-      vec3 viewDir = vec3(0.0, 0.0, 1.0);
-      vec3 reflectDir = reflect(-lightDir, normal);
-      float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
-      
-      vec3 ambient = texColor.rgb * 0.4;
-      vec3 lighting = (texColor.rgb * diff * 1.5 + spec * 0.8) * uLightColor * attenuation;
-      vec3 finalColor = ambient + lighting;
-      
-      gl_FragColor = vec4(finalColor, texColor.a);
-    }
-  `;
-
-  const material = useMemo(() => {
-    return new THREE.ShaderMaterial({
-      uniforms: {
-        uTexture: { value: texture },
-        uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-        uLightColor: { value: new THREE.Color(lightColor) },
-      },
-      vertexShader,
-      fragmentShader
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [texture]); // Deliberately omit lightColor so we don't recreate material on hover
-
-  useFrame((state) => {
-    if (material) {
-      // Smoothly interpolate light color to target
-      const targetColor = new THREE.Color(lightColor);
-      material.uniforms.uLightColor.value.lerp(targetColor, 0.1);
-
-      // Track mouse position
-      const targetX = (state.pointer.x + 1) / 2;
-      const targetY = (state.pointer.y + 1) / 2;
-      
-      // Smooth follow
-      material.uniforms.uMouse.value.x += (targetX - material.uniforms.uMouse.value.x) * 0.1;
-      material.uniforms.uMouse.value.y += (targetY - material.uniforms.uMouse.value.y) * 0.1;
-    }
-  });
-
-  return <primitive object={material} attach="material" />;
-};
-
 const Scene = ({ src, lightColor, onLoad }: { src: string, lightColor: string, onLoad: () => void }) => {
   const texture = useTexture(src);
   const { viewport } = useThree();
+  const lightRef = useRef<THREE.PointLight>(null);
+  const colorRef = useRef(new THREE.Color(lightColor));
   
   React.useEffect(() => {
     if (texture) {
       onLoad();
     }
   }, [texture, onLoad]);
+
+  useFrame((state) => {
+    if (lightRef.current) {
+      // Smoothly interpolate light color
+      colorRef.current.set(lightColor);
+      lightRef.current.color.lerp(colorRef.current, 0.1);
+
+      // Map pointer to viewport coordinates for the light
+      const targetX = (state.pointer.x * viewport.width) / 2;
+      const targetY = (state.pointer.y * viewport.height) / 2;
+      
+      // Smooth follow
+      lightRef.current.position.x += (targetX - lightRef.current.position.x) * 0.1;
+      lightRef.current.position.y += (targetY - lightRef.current.position.y) * 0.1;
+    }
+  });
   
   return (
-    <mesh>
-      <planeGeometry args={[viewport.width, viewport.height]} /> 
-      <DynamicShaderMaterial texture={texture} lightColor={lightColor} />
-    </mesh>
+    <>
+      <ambientLight intensity={0.6} />
+      <pointLight 
+        ref={lightRef} 
+        color={lightColor} 
+        intensity={2.5} 
+        distance={viewport.width * 1.5} 
+        position={[0, 0, 0.8]} 
+        decay={2}
+      />
+      <mesh>
+        <planeGeometry args={[viewport.width, viewport.height, 64, 64]} /> 
+        <meshStandardMaterial 
+          map={texture} 
+          bumpMap={texture} 
+          bumpScale={0.015} 
+          roughness={0.7} 
+          metalness={0.2} 
+        />
+      </mesh>
+    </>
   );
 };
 
