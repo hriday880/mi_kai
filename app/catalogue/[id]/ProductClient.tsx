@@ -123,107 +123,104 @@ export default function ProductClient({ product }: { product: Product }) {
               </div>
             </div>
 
-            {/* Right Column: Tech Table & Chamber */}
-            <div className={styles.tableAndChamberSection} style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-              
-              <div className={styles.tableSection} style={{ flex: '1 1 400px' }}>
-                <h2 className="text-heading text-xl text-bright mb-6">{t('product.specs')}</h2>
-                <div className={styles.tableWrapper}>
-                  <table className={styles.table}>
-                    <thead>
-                      <tr>
-                        <th>{t('product.table.model')}</th>
-                        <th>{t('product.table.size')}</th>
-                        <th>{t('product.table.cutout')}</th>
-                        <th>{t('product.table.angle')}</th>
-                        <th className={styles.centerAlign}>{t('product.table.test')}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {product.specifications.map((spec, i) => {
-                        const isActive = activeSpecIndex === i;
-                        
-                        return (
-                          <tr key={i} className={isActive ? styles.activeRow : ''}>
-                            <td>{spec.wattage}</td>
-                            <td>{spec.size}</td>
-                            <td>{spec.cutOut}</td>
-                            <td>{spec.beamAngle}°</td>
-                            <td className={styles.centerAlign} style={{ position: 'relative' }}>
-                              <button 
-                                className={`${styles.switchButton} ${isActive ? styles.switchOn : ''}`}
-                                onClick={() => setActiveSpecIndex(isActive ? null : i)}
-                                aria-label={`Toggle ${spec.wattage} light`}
-                              >
-                                <div className={styles.switchHandle} />
-                              </button>
-                              
-                              {/* Floating Interactive Testing Chamber */}
-                              {isActive && (
-                                <div className={styles.floatingChamber}>
-                                  <div className={styles.chamberTitle}>Live Preview</div>
-                                  <div 
-                                    className={styles.testingChamber}
-                                    onPointerMove={handlePointerMove}
-                                    onPointerLeave={handlePointerLeave}
-                                    style={getLightStyles()}
-                                  >
-                                    <div className={styles.lightSource} style={{ left: `${panX}%` }}>
-                                      <div className={`${styles.lightSpill} ${styles.lightConeActive}`} />
-                                      <div className={`${styles.lightCone} ${styles.lightConeActive}`} />
-                                    </div>
-                                    
-                                    {/* SVG Angle and Spread Overlays */}
-                                    {(() => {
-                                      const angle = parseInt(spec.beamAngle) || 45;
-                                      const spillAngle = angle + 40;
-                                      const originX = (panX / 100) * 250;
-                                      const originY = 5;
-                                      const chamberHeight = 250;
-                                      
-                                      const halfBeam = (angle / 2) * (Math.PI / 180);
-                                      const halfSpill = (spillAngle / 2) * (Math.PI / 180);
-                                      
-                                      const beamLeftX = originX - chamberHeight * Math.tan(halfBeam);
-                                      const beamRightX = originX + chamberHeight * Math.tan(halfBeam);
-                                      
-                                      const spillLeftX = originX - chamberHeight * Math.tan(halfSpill);
-                                      const spillRightX = originX + chamberHeight * Math.tan(halfSpill);
-
-                                      return (
-                                        <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10 }}>
-                                          {/* Beam Angle */}
-                                          <line x1={originX} y1={originY} x2={beamLeftX} y2={chamberHeight} stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 4" />
-                                          <line x1={originX} y1={originY} x2={beamRightX} y2={chamberHeight} stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 4" />
-                                          
-                                          {/* Spill Angle */}
-                                          <line x1={originX} y1={originY} x2={spillLeftX} y2={chamberHeight} stroke="rgba(212, 175, 55, 0.3)" strokeWidth="1" strokeDasharray="2 6" />
-                                          <line x1={originX} y1={originY} x2={spillRightX} y2={chamberHeight} stroke="rgba(212, 175, 55, 0.3)" strokeWidth="1" strokeDasharray="2 6" />
-                                          
-                                          {/* Labels */}
-                                          <text x={originX} y={50} fill="rgba(255,255,255,0.8)" fontSize="10" textAnchor="middle" fontFamily="monospace" style={{ textShadow: '0 2px 4px rgba(0,0,0,1)' }}>
-                                            {angle}° Beam
-                                          </text>
-                                          <text x={originX} y={70} fill="rgba(212, 175, 55, 0.8)" fontSize="10" textAnchor="middle" fontFamily="monospace" style={{ textShadow: '0 2px 4px rgba(0,0,0,1)' }}>
-                                            {spillAngle}° Spread
-                                          </text>
-                                        </svg>
-                                      );
-                                    })()}
-
-                                    <div className={styles.chamberFloor}>
-                                      <div className={`${styles.floorHighlight} ${styles.floorHighlightActive}`} style={{ left: `${panX}%` }} />
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+            {/* Middle Column: Live Preview Chamber */}
+            <div className={styles.previewColumn} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <h2 className="text-heading text-xl text-bright mb-6">Live Preview</h2>
+              <div 
+                className={styles.testingChamber}
+                onPointerMove={handlePointerMove}
+                onPointerLeave={handlePointerLeave}
+                style={{ ...getLightStyles(), width: '250px', height: '250px', margin: '0 auto', opacity: activeSpec ? 1 : 0.2 }}
+              >
+                <div className={styles.lightSource} style={{ left: `${panX}%` }}>
+                  <div className={`${styles.lightSpill} ${styles.lightConeActive}`} />
+                  <div className={`${styles.lightCone} ${styles.lightConeActive}`} />
                 </div>
+                
+                {/* SVG Angle and Spread Overlays */}
+                {activeSpec && (() => {
+                  const angle = parseInt(activeSpec.beamAngle) || 45;
+                  const spillAngle = angle + 40;
+                  const originX = (panX / 100) * 250;
+                  const originY = 5;
+                  const chamberHeight = 250;
+                  
+                  const halfBeam = (angle / 2) * (Math.PI / 180);
+                  const halfSpill = (spillAngle / 2) * (Math.PI / 180);
+                  
+                  const beamLeftX = originX - chamberHeight * Math.tan(halfBeam);
+                  const beamRightX = originX + chamberHeight * Math.tan(halfBeam);
+                  
+                  const spillLeftX = originX - chamberHeight * Math.tan(halfSpill);
+                  const spillRightX = originX + chamberHeight * Math.tan(halfSpill);
+
+                  return (
+                    <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10 }}>
+                      <line x1={originX} y1={originY} x2={beamLeftX} y2={chamberHeight} stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 4" />
+                      <line x1={originX} y1={originY} x2={beamRightX} y2={chamberHeight} stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 4" />
+                      
+                      <line x1={originX} y1={originY} x2={spillLeftX} y2={chamberHeight} stroke="rgba(212, 175, 55, 0.3)" strokeWidth="1" strokeDasharray="2 6" />
+                      <line x1={originX} y1={originY} x2={spillRightX} y2={chamberHeight} stroke="rgba(212, 175, 55, 0.3)" strokeWidth="1" strokeDasharray="2 6" />
+                      
+                      <text x={originX} y={50} fill="rgba(255,255,255,0.8)" fontSize="10" textAnchor="middle" fontFamily="monospace" style={{ textShadow: '0 2px 4px rgba(0,0,0,1)' }}>
+                        {angle}° Beam
+                      </text>
+                      <text x={originX} y={70} fill="rgba(212, 175, 55, 0.8)" fontSize="10" textAnchor="middle" fontFamily="monospace" style={{ textShadow: '0 2px 4px rgba(0,0,0,1)' }}>
+                        {spillAngle}° Spread
+                      </text>
+                    </svg>
+                  );
+                })()}
+
+                <div className={styles.chamberFloor}>
+                  <div className={`${styles.floorHighlight} ${styles.floorHighlightActive}`} style={{ left: `${panX}%` }} />
+                </div>
+              </div>
+              {!activeSpec && (
+                <p style={{ marginTop: '1rem', color: '#888', fontSize: '0.8rem', textAlign: 'center', maxWidth: '250px' }}>
+                  Toggle a switch in the Technical Specifications to test the light.
+                </p>
+              )}
+            </div>
+
+            {/* Right Column: Tech Table */}
+            <div className={styles.tableSection}>
+              <h2 className="text-heading text-xl text-bright mb-6">{t('product.specs')}</h2>
+              <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>{t('product.table.model')}</th>
+                      <th>{t('product.table.size')}</th>
+                      <th>{t('product.table.cutout')}</th>
+                      <th>{t('product.table.angle')}</th>
+                      <th className={styles.centerAlign}>{t('product.table.test')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {product.specifications.map((spec, i) => {
+                      const isActive = activeSpecIndex === i;
+                      
+                      return (
+                        <tr key={i} className={isActive ? styles.activeRow : ''}>
+                          <td>{spec.wattage}</td>
+                          <td>{spec.size}</td>
+                          <td>{spec.cutOut}</td>
+                          <td>{spec.beamAngle}°</td>
+                          <td className={styles.centerAlign}>
+                            <button 
+                              className={`${styles.switchButton} ${isActive ? styles.switchOn : ''}`}
+                              onClick={() => setActiveSpecIndex(isActive ? null : i)}
+                              aria-label={`Toggle ${spec.wattage} light`}
+                            >
+                              <div className={styles.switchHandle} />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

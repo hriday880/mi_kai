@@ -236,7 +236,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr auto 2fr;
   gap: var(--space-3xl);
   margin-bottom: var(--space-4xl);
 }
