@@ -224,10 +224,9 @@ function getFixtureSizeMM(productId: string, wattage: number): number {
   const product = productsData.find(p => p.id === productId);
   if (!product?.specifications) return 60; // fallback 60mm
   const spec = product.specifications.find(s => parseInt(s.wattage) === wattage);
-  if (!spec?.size) return 60;
-  // size format: "70x50" (diameter x depth in mm)
-  const diameterStr = spec.size.split('x')[0];
-  return parseInt(diameterStr) || 60;
+  if (!spec?.cutOut) return 60;
+  // Use cutOut directly since it represents the actual diameter hole
+  return parseInt(spec.cutOut) || 60;
 }
 
 // Helper: get beam angle for a specific wattage
@@ -399,17 +398,15 @@ function CeilingGrid({
     <div style={{
       width: '100%',
       height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      overflow: 'auto',
       padding: '1.5rem',
       background: '#0a0e17'
     }}>
       <div style={{
         position: 'relative',
+        minWidth: '900px', // Force a minimum width to trigger scrolling
         width: '100%',
-        maxWidth: '900px',
-        maxHeight: '85vh',
+        margin: '0 auto',
         aspectRatio: `${totalW} / ${totalH}`,
       }}>
         <svg 
