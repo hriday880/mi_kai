@@ -173,6 +173,44 @@ export default function ProductClient({ product }: { product: Product }) {
                                       <div className={`${styles.lightCone} ${styles.lightConeActive}`} />
                                     </div>
                                     
+                                    {/* SVG Angle and Spread Overlays */}
+                                    {(() => {
+                                      const angle = parseInt(spec.beamAngle) || 45;
+                                      const spillAngle = angle + 40;
+                                      const originX = (panX / 100) * 250;
+                                      const originY = 5;
+                                      const chamberHeight = 250;
+                                      
+                                      const halfBeam = (angle / 2) * (Math.PI / 180);
+                                      const halfSpill = (spillAngle / 2) * (Math.PI / 180);
+                                      
+                                      const beamLeftX = originX - chamberHeight * Math.tan(halfBeam);
+                                      const beamRightX = originX + chamberHeight * Math.tan(halfBeam);
+                                      
+                                      const spillLeftX = originX - chamberHeight * Math.tan(halfSpill);
+                                      const spillRightX = originX + chamberHeight * Math.tan(halfSpill);
+
+                                      return (
+                                        <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10 }}>
+                                          {/* Beam Angle */}
+                                          <line x1={originX} y1={originY} x2={beamLeftX} y2={chamberHeight} stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 4" />
+                                          <line x1={originX} y1={originY} x2={beamRightX} y2={chamberHeight} stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeDasharray="4 4" />
+                                          
+                                          {/* Spill Angle */}
+                                          <line x1={originX} y1={originY} x2={spillLeftX} y2={chamberHeight} stroke="rgba(212, 175, 55, 0.3)" strokeWidth="1" strokeDasharray="2 6" />
+                                          <line x1={originX} y1={originY} x2={spillRightX} y2={chamberHeight} stroke="rgba(212, 175, 55, 0.3)" strokeWidth="1" strokeDasharray="2 6" />
+                                          
+                                          {/* Labels */}
+                                          <text x={originX} y={50} fill="rgba(255,255,255,0.8)" fontSize="10" textAnchor="middle" fontFamily="monospace" style={{ textShadow: '0 2px 4px rgba(0,0,0,1)' }}>
+                                            {angle}° Beam
+                                          </text>
+                                          <text x={originX} y={70} fill="rgba(212, 175, 55, 0.8)" fontSize="10" textAnchor="middle" fontFamily="monospace" style={{ textShadow: '0 2px 4px rgba(0,0,0,1)' }}>
+                                            {spillAngle}° Spread
+                                          </text>
+                                        </svg>
+                                      );
+                                    })()}
+
                                     <div className={styles.chamberFloor}>
                                       <div className={`${styles.floorHighlight} ${styles.floorHighlightActive}`} style={{ left: `${panX}%` }} />
                                     </div>
