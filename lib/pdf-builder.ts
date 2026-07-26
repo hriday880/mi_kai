@@ -329,7 +329,7 @@ export async function generatePDFReport({
           const cy = gridStartY + (r * cellH) + (cellH / 2) + 1; 
           
           if (val === Math.round(surface.max) && val > 0) {
-            doc.setTextColor(255, 255, 255); // White text on dark red/hot heatmap
+            doc.setTextColor(15, 15, 15); // Dark text on light pastel heatmap
             doc.setFont("helvetica", "bold");
           } else {
             doc.setTextColor(15, 15, 15);
@@ -339,6 +339,44 @@ export async function generatePDFReport({
           doc.text(val.toString(), cx, cy, { align: 'center' });
         }
       }
+    }
+
+    // --- Color Legend ---
+    const legendY = gridStartY + boxH + 12;
+    if (legendY < pageHeight - 20) {
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(30, 30, 30);
+      doc.text("Color Legend (Illuminance / Activity)", 15, legendY);
+      
+      const legendItems = [
+        { color: [248, 250, 252], lux: "< 50 lx", desc: "Walkway / Low Light" },
+        { color: [186, 230, 253], lux: "~100 lx", desc: "Ambient / Read a book" },
+        { color: [134, 239, 172], lux: "300-500 lx", desc: "Perfect Light" },
+        { color: [254, 240, 138], lux: "750+ lx", desc: "Very Bright" }
+      ];
+      
+      let legX = 15;
+      const legStep = (pageWidth - 30) / 4;
+      
+      legendItems.forEach(item => {
+        doc.setFillColor(item.color[0], item.color[1], item.color[2]);
+        doc.rect(legX, legendY + 4, 10, 10, 'F');
+        doc.setDrawColor(200, 200, 200);
+        doc.setLineWidth(0.2);
+        doc.rect(legX, legendY + 4, 10, 10, 'S');
+        
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(50, 50, 50);
+        doc.text(item.lux, legX + 13, legendY + 8);
+        
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(80, 80, 80);
+        doc.text(item.desc, legX + 13, legendY + 12.5);
+        
+        legX += legStep;
+      });
     }
 
     addFooter(pageNum++);

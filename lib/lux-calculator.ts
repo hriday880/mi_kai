@@ -145,6 +145,13 @@ export function calculateSurfaceLux(
 
 // DEPRECATED function kept for backward compatibility if needed, but not used by new Multi-Surface engine.
 
+export function getLuxColor(lux: number): string {
+  if (lux < 50) return '#F8FAFC'; // < 50 lx: Walkway (Very Light Gray)
+  if (lux < 200) return '#BAE6FD'; // ~100 lx: Ambient/Reading (Light Blue)
+  if (lux < 600) return '#86EFAC'; // 300-500 lx: Optimal/Perfect (Light Green)
+  return '#FEF08A'; // 750+ lx: Very Bright (Light Yellow)
+}
+
 export function generateHeatmapDataURL(heatmap: number[][], maxLux: number = 500): string {
   if (typeof window === 'undefined') return ''; // Safety for SSR
   const rows = heatmap.length;
@@ -161,14 +168,11 @@ export function generateHeatmapDataURL(heatmap: number[][], maxLux: number = 500
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       const lux = heatmap[r][c];
-      const intensity = Math.min(lux / maxLux, 1);
-      // Cold to hot color mapping (Blue -> Green -> Yellow -> Red)
-      const hue = (1 - intensity) * 240; 
-      ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+      ctx.fillStyle = getLuxColor(lux);
       ctx.fillRect(c * 20, r * 20, 20, 20);
       
       // Draw grid lines
-      ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+      ctx.strokeStyle = 'rgba(0,0,0,0.05)';
       ctx.strokeRect(c * 20, r * 20, 20, 20);
     }
   }
