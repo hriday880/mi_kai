@@ -2,37 +2,39 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import styles from './LightSwitch.module.css';
 
 export default function LightSwitch() {
   const pathname = usePathname();
-  const [lightsOn, setLightsOn] = useState(false);
   const [pulling, setPulling] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { setTheme, resolvedTheme } = useTheme();
 
-  // Apply/remove the global class on <html>
   useEffect(() => {
-    const html = document.documentElement;
-    if (lightsOn) {
-      html.classList.add('lights-on');
-    } else {
-      html.classList.remove('lights-on');
-    }
-  }, [lightsOn]);
+    setMounted(true);
+  }, []);
+
+  const lightsOn = mounted && resolvedTheme === 'light';
 
   const handlePull = useCallback(() => {
     setPulling(true);
     // Wait for the pull animation to finish, then toggle
     setTimeout(() => {
-      setLightsOn(prev => !prev);
+      setTheme(resolvedTheme === 'light' ? 'dark' : 'light');
       setPulling(false);
     }, 400);
-  }, []);
+  }, [resolvedTheme, setTheme]);
 
   // Hide the pull cord on the product details pages where we have interactive light testing
   // MUST be placed after all React hooks (useState, useEffect, useCallback)
   if (pathname.match(/^\/catalogue\/.+/)) {
     return null;
   }
+
+  // Prevent hydration mismatch by not rendering the interactive parts until mounted
+  // or at least wait to determine the correct label
+  const label = lightsOn ? 'OFF' : 'ON';
 
   return (
     <div className={styles.switchContainer}>
@@ -55,7 +57,7 @@ export default function LightSwitch() {
 
         {/* Tiny label */}
         <span className={styles.label}>
-          {lightsOn ? 'OFF' : 'ON'}
+          {mounted ? label : '...'}
         </span>
       </div>
     </div>

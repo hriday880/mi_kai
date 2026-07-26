@@ -6,27 +6,132 @@
   z-index: 1;
 }
 
-/* Light Beam Feature */
-.lightBeam {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 50;
-  opacity: 0;
-  transition: opacity 0.8s ease-in-out;
-  /* Complex gradient combining warm white with the dynamic finish tint */
-  background: radial-gradient(circle at 50% -10%, 
-    color-mix(in srgb, var(--light-tint) 15%, rgba(255, 240, 220, 0.95)) 0%, 
-    color-mix(in srgb, var(--light-tint) 10%, rgba(255, 240, 220, 0.4)) 40%, 
-    transparent 80%);
-  mix-blend-mode: screen;
+/* Interactive Testing Chamber */
+.chamberWrapper {
+  margin-bottom: var(--space-4xl);
+  perspective: 1000px;
 }
 
-.lightBeamActive {
-  /* Class to trigger any additional active states if needed */
+.testingChamber {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 20px 40px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.5);
+  cursor: crosshair;
+  transition: opacity 0.5s ease;
+  touch-action: none; /* Prevent scroll while panning */
+}
+
+.chamberInstruction {
+  position: absolute;
+  top: var(--space-md);
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  letter-spacing: 1px;
+  pointer-events: none;
+  z-index: 5;
+  text-transform: uppercase;
+}
+
+.lightSource {
+  position: absolute;
+  top: 0;
+  width: 20px;
+  height: 10px;
+  background: var(--light-tint, #fff);
+  border-radius: 0 0 10px 10px;
+  transform: translateX(-50%);
+  box-shadow: 0 0 20px 5px var(--light-tint, #fff);
+  z-index: 4;
+  opacity: 0;
+  transition: left 0.1s ease-out, opacity 0.5s ease;
+}
+
+.testingChamber[style*="opacity: 0"] .lightSource {
+  opacity: 0 !important;
+}
+.testingChamber:not([style*="opacity: 0"]) .lightSource {
+  opacity: 1;
+}
+
+.lightCone {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  width: 100vw;
+  height: 400px;
+  transform: translateX(-50%);
+  transform-origin: top center;
+  /* Beam angle calculation: 
+     Since beam angle is passed via CSS variable, we can simulate the cone spread. 
+     Using a conic gradient bounded by the angle. 
+     Instead of complex math, we use polygon clip-path based on the angle. 
+     For a simpler approach that scales smoothly, we use a combination of radial and conic gradients or simply linear gradient with clip-path */
+  background: linear-gradient(180deg, 
+    color-mix(in srgb, var(--light-tint) 80%, transparent) 0%, 
+    color-mix(in srgb, var(--light-tint) 10%, transparent) 100%);
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  transition: opacity 0.5s ease;
+  
+  /* Calculate clip path polygon points for a cone. 
+     Using a wide base that adjusts somewhat with beam angle.
+     Without trig functions in basic CSS, we'll use a conic gradient instead for a true angle feel.
+  */
+  background: conic-gradient(
+    from calc(180deg - (var(--beam-angle) / 2)) at 50% 0%, 
+    transparent 0deg,
+    color-mix(in srgb, var(--light-tint) 60%, transparent) 5%,
+    color-mix(in srgb, var(--light-tint) 80%, transparent) 50%,
+    color-mix(in srgb, var(--light-tint) 60%, transparent) 95%,
+    transparent var(--beam-angle),
+    transparent 360deg
+  );
+  
+  /* Add blur for realistic soft edges */
+  filter: blur(8px);
+}
+
+.lightConeActive {
+  opacity: var(--opacity, 1);
+}
+
+.chamberFloor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.03);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  transform: rotateX(60deg);
+  transform-origin: bottom center;
+  pointer-events: none;
+}
+
+.floorHighlight {
+  position: absolute;
+  top: 50%;
+  width: 200px;
+  height: 100px;
+  background: radial-gradient(ellipse at center, var(--light-tint) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: left 0.1s ease-out, opacity 0.5s ease;
+  mix-blend-mode: screen;
+  filter: blur(10px);
+}
+
+.floorHighlightActive {
+  opacity: calc(var(--opacity, 1) * 0.8);
 }
 
 /* Hero Section */

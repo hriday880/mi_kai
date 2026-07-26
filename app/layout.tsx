@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Cormorant_Garamond, Outfit, Shippori_Mincho, Noto_Serif_SC } from 'next/font/google';
 import { LanguageProvider } from '@/lib/LanguageContext';
+import { ThemeProvider } from '@/components/ThemeProvider';
 import LightSwitch from '@/components/LightSwitch';
 import Navigation from '@/components/Navigation';
 import './globals.css';
@@ -97,11 +98,13 @@ export default function RootLayout({
           MozOsxFontSmoothing: 'grayscale',
         }}
       >
-        <LanguageProvider>
-          <Navigation />
-          <LightSwitch />
-          {children}
-        </LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <Navigation />
+            <LightSwitch />
+            {children}
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -18,29 +18,40 @@ type Product = {
 export default function ProductClient({ product }: { product: Product }) {
   const { t } = useLanguage();
   const [activeFinish, setActiveFinish] = useState(product.finishes[0] || null);
-  const [activeLightWattage, setActiveLightWattage] = useState<number | null>(null);
+  const [activeSpecIndex, setActiveSpecIndex] = useState<number | null>(null);
+  const [panX, setPanX] = useState(50);
 
-  // Calculate light properties based on wattage and finish
+  const activeSpec = activeSpecIndex !== null ? product.specifications[activeSpecIndex] : null;
+
+  // Calculate light properties based on wattage, finish, and beam angle
   const getLightStyles = () => {
-    if (!activeLightWattage) return { opacity: 0 };
+    if (!activeSpec) return { opacity: 0, '--light-tint': activeFinish?.hex || '#FFF0DC' } as React.CSSProperties;
     
+    const wattageNum = parseInt(activeSpec.wattage);
     // Max wattage is 18, base opacity scales up
-    const intensity = Math.min((activeLightWattage / 18) * 0.85 + 0.15, 1);
+    const intensity = Math.min((wattageNum / 18) * 0.85 + 0.15, 1);
     
     return {
       opacity: intensity,
       '--light-tint': activeFinish?.hex || '#FFF0DC',
+      '--beam-angle': `${activeSpec.beamAngle}deg`,
+      '--pan-x': `${panX}%`
     } as React.CSSProperties;
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    let x = ((e.clientX - rect.left) / rect.width) * 100;
+    x = Math.max(0, Math.min(100, x));
+    setPanX(x);
+  };
+
+  const handlePointerLeave = () => {
+    setPanX(50); // reset to center when leaving
   };
 
   return (
     <main className={styles.main}>
-      {/* Interactive Light Beam */}
-      <div 
-        className={`${styles.lightBeam} ${activeLightWattage ? styles.lightBeamActive : ''}`}
-        style={getLightStyles()}
-      />
-
       {/* Hero Image */}
       <section className={styles.heroSection}>
         <div className={styles.imageWrapper}>
@@ -62,6 +73,28 @@ export default function ProductClient({ product }: { product: Product }) {
           <div className={styles.header}>
             <h1 className="text-heading text-4xl text-bright">#{product.id}</h1>
             <span className={styles.category}>{t(`categories.${product.category}`)}</span>
+          </div>
+          
+          {/* Interactive Testing Chamber */}
+          <div className={styles.chamberWrapper}>
+            <div 
+              className={styles.testingChamber}
+              onPointerMove={handlePointerMove}
+              onPointerLeave={handlePointerLeave}
+              style={getLightStyles()}
+            >
+              <div className={styles.chamberInstruction}>
+                {activeSpec ? t('product.chamber.active') || 'Interact to see light cast' : t('product.chamber.inactive') || 'Turn on a switch below to test light'}
+              </div>
+              
+              <div className={styles.lightSource} style={{ left: `${panX}%` }}>
+                <div className={`${styles.lightCone} ${activeSpec ? styles.lightConeActive : ''}`} />
+              </div>
+              
+              <div className={styles.chamberFloor}>
+                <div className={`${styles.floorHighlight} ${activeSpec ? styles.floorHighlightActive : ''}`} style={{ left: `${panX}%` }} />
+              </div>
+            </div>
           </div>
 
           <div className={styles.grid}>
@@ -101,8 +134,7 @@ export default function ProductClient({ product }: { product: Product }) {
                   </thead>
                   <tbody>
                     {product.specifications.map((spec, i) => {
-                      const wattageNum = parseInt(spec.wattage);
-                      const isActive = activeLightWattage === wattageNum;
+                      const isActive = activeSpecIndex === i;
                       
                       return (
                         <tr key={i} className={isActive ? styles.activeRow : ''}>
@@ -113,7 +145,7 @@ export default function ProductClient({ product }: { product: Product }) {
                           <td className={styles.centerAlign}>
                             <button 
                               className={`${styles.switchButton} ${isActive ? styles.switchOn : ''}`}
-                              onClick={() => setActiveLightWattage(isActive ? null : wattageNum)}
+                              onClick={() => setActiveSpecIndex(isActive ? null : i)}
                               aria-label={`Toggle ${spec.wattage} light`}
                             >
                               <div className={styles.switchHandle} />

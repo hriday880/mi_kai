@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useLanguage, type Lang } from '@/lib/LanguageContext';
 import styles from './Navigation.module.css';
 import logoGold from '@/public/logo-gold.svg';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -122,6 +123,10 @@ export default function Navigation() {
 
           {/* Right section */}
           <div className={styles.right}>
+            {/* Theme Toggle */}
+            <ThemeToggle />
+            <span className={styles.langDivider} style={{marginRight: '12px'}} >|</span>
+
             {/* Language switcher */}
             <div className={styles.langSwitcher} role="group" aria-label="Language switcher">
               {languages.map((l, i) => (
@@ -204,6 +209,8 @@ export default function Navigation() {
         </ul>
 
         <div className={styles.drawerLang}>
+          <ThemeToggle />
+          <span className={styles.langDivider} style={{margin: '0 12px'}} >|</span>
           {languages.map((l, i) => (
             <span key={l}>
               <button
