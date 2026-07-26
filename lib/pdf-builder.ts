@@ -350,10 +350,26 @@ export async function generatePDFReport({
       doc.text("Color Legend (Illuminance / Activity)", 15, legendY);
       
       const legendItems = [
-        { color: [248, 250, 252], lux: "< 50 lx", desc: "Walkway / Low Light" },
-        { color: [186, 230, 253], lux: "~100 lx", desc: "Ambient / Read a book" },
-        { color: [134, 239, 172], lux: "300-500 lx", desc: "Perfect Light" },
-        { color: [254, 240, 138], lux: "750+ lx", desc: "Very Bright" }
+        { 
+          color: [248, 250, 252], 
+          lux: "< 50 lx", 
+          desc: ["Navigating a hallway,", "or cozy home movie night"]
+        },
+        { 
+          color: [186, 230, 253], 
+          lux: "~100-200 lx", 
+          desc: ["Relaxing in a living room,", "reading a book comfortably"]
+        },
+        { 
+          color: [134, 239, 172], 
+          lux: "300-500 lx", 
+          desc: ["Ideal for focused desk work,", "like a modern office space"]
+        },
+        { 
+          color: [254, 240, 138], 
+          lux: "750+ lx", 
+          desc: ["High precision tasking,", "feels like bright studio lights"]
+        }
       ];
       
       let legX = 15;
@@ -369,11 +385,14 @@ export async function generatePDFReport({
         doc.setFontSize(8);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(50, 50, 50);
-        doc.text(item.lux, legX + 13, legendY + 8);
+        doc.text(item.lux, legX + 13, legendY + 7);
         
         doc.setFont("helvetica", "normal");
+        doc.setFontSize(7);
         doc.setTextColor(80, 80, 80);
-        doc.text(item.desc, legX + 13, legendY + 12.5);
+        item.desc.forEach((line, i) => {
+          doc.text(line, legX + 13, legendY + 10.5 + (i * 3));
+        });
         
         legX += legStep;
       });
