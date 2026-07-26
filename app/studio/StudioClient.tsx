@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import styles from './page.module.css';
@@ -287,8 +287,8 @@ function CeilingGrid({
   };
 
   // Generate ruler ticks
-  const topRulerTicks: JSX.Element[] = [];
-  const leftRulerTicks: JSX.Element[] = [];
+  const topRulerTicks: React.ReactNode[] = [];
+  const leftRulerTicks: React.ReactNode[] = [];
 
   if (rulerUnit === 'ft') {
     // Feet + inches: major tick every 1ft, minor every 6in
@@ -366,7 +366,7 @@ function CeilingGrid({
   }
 
   // Grid lines within the drawing area
-  const gridLines: JSX.Element[] = [];
+  const gridLines: React.ReactNode[] = [];
   const gridStep = rulerUnit === 'ft' ? (scale / 3.28084) : (scale / 2); // 1ft or 0.5m
   const majorStep = rulerUnit === 'ft' ? gridStep : scale; // every 1ft or 1m
   
