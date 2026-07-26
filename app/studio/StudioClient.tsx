@@ -970,7 +970,7 @@ export default function StudioClient() {
       </div>
 
       {/* Hidden 3D Environment for Render & Light Calculation */}
-      <div style={{ position: 'fixed', left: 0, top: 0, width: '1920px', height: '1080px', pointerEvents: 'none', visibility: 'hidden' }}>
+      <div style={{ position: 'fixed', left: 0, top: 0, width: '1920px', height: '1080px', pointerEvents: 'none', opacity: 0, zIndex: -1 }}>
         <Canvas 
           shadows="soft"
           camera={{ position: [0, dimensions.height * 0.8, dimensions.length], fov: 50 }}
