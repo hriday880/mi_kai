@@ -704,15 +704,26 @@ footer {
   transition: background-color 0.8s ease, box-shadow 0.8s ease;
 }
 
-/* Override CSS variables when lights are on */
+/* Override CSS variables when lights are on (True Light Mode) */
 html.lights-on {
-  --color-void:     #1a1915;
-  --color-rich:     #221f18;
-  --color-charcoal: #2a261d;
-  --color-soft:     #332e24;
-  --bg-primary:     var(--color-void);
-  --bg-secondary:   var(--color-rich);
-  --bg-tertiary:    var(--color-charcoal);
+  --color-void:         #F9FAFB; /* Light grayish-white */
+  --color-rich:         #FFFFFF; /* Pure white */
+  --color-charcoal:     #F3F4F6; /* Light gray for borders/cards */
+  --color-soft:         #E5E7EB; /* Muted gray */
+
+  --bg-primary:         var(--color-void);
+  --bg-secondary:       var(--color-rich);
+  --bg-elevated:        var(--color-rich);
+  --bg-surface:         var(--color-charcoal);
+  
+  --text-primary:       #111827; /* Dark slate text */
+  --text-secondary:     #4B5563; /* Muted dark text */
+  --text-bright:        #000000; /* Pure black for headings */
+  
+  --border-subtle:      1px solid rgba(0, 0, 0, 0.08);
+  --border-accent:      1px solid rgba(212, 175, 55, 0.5);
+  
+  --shadow-elevation:   0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
 /* Warm ambient glow overlay on body */
