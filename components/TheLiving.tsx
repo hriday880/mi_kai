@@ -6,8 +6,7 @@ import styles from './TheLiving.module.css';
 import bedroomImg from '@/public/images/bedroom.jpg';
 import livingImg from '@/public/images/living.jpg';
 import workspaceImg from '@/public/images/workspace.jpg';
-
-import DynamicLightImage from './DynamicLightImage';
+import ImageWithLoading from './ImageWithLoading';
 
 export default function TheLiving() {
   const { t } = useLanguage();
@@ -45,7 +44,7 @@ export default function TheLiving() {
           {/* Bedroom Card */}
           <div className={`${styles.card} ${styles.reveal}`}>
             <div className={styles.imagePlaceholder}>
-              <DynamicLightImage src={bedroomImg.src} />
+              <ImageWithLoading src={bedroomImg.src} alt={t('theLiving.bedroom')} fill style={{ objectFit: 'cover' }} />
             </div>
             <div className={styles.cardContent}>
               <h3 className={styles.cardTitle}>{t('theLiving.bedroom')}</h3>
@@ -56,7 +55,7 @@ export default function TheLiving() {
           {/* Living Room Card */}
           <div className={`${styles.card} ${styles.reveal}`} style={{ transitionDelay: '0.1s' }}>
             <div className={styles.imagePlaceholder}>
-              <DynamicLightImage src={livingImg.src} />
+              <ImageWithLoading src={livingImg.src} alt={t('theLiving.living')} fill style={{ objectFit: 'cover' }} />
             </div>
             <div className={styles.cardContent}>
               <h3 className={styles.cardTitle}>{t('theLiving.living')}</h3>
@@ -67,7 +66,7 @@ export default function TheLiving() {
           {/* Workspace Card */}
           <div className={`${styles.card} ${styles.reveal}`} style={{ transitionDelay: '0.2s' }}>
             <div className={styles.imagePlaceholder}>
-              <DynamicLightImage src={workspaceImg.src} />
+              <ImageWithLoading src={workspaceImg.src} alt={t('theLiving.workspace')} fill style={{ objectFit: 'cover' }} />
             </div>
             <div className={styles.cardContent}>
               <h3 className={styles.cardTitle}>{t('theLiving.workspace')}</h3>
