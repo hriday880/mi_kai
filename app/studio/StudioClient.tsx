@@ -57,14 +57,14 @@ function Screenshotter() {
   const { gl, scene, camera } = useThree();
   
   if (typeof window !== 'undefined') {
-    (window as any).takeSequenceScreenshots = (onComplete: (renders: string[]) => void) => {
+    (window as any).takeSequenceScreenshots = (onComplete: (renders: string[]) => void, onProgress?: (pct: number) => void) => {
       const captures: string[] = [];
       const origPos = camera.position.clone();
       const origRatio = gl.getPixelRatio();
       const origShadowType = gl.shadowMap.type;
       
-      // Force max realism for capture
-      gl.setPixelRatio(3.0);
+      // Reduce pixel ratio to prevent browser crashes during 4K multi-pass rendering
+      gl.setPixelRatio(1.5);
       gl.shadowMap.type = THREE.PCFSoftShadowMap;
 
       const angles = [
@@ -139,6 +139,12 @@ function Screenshotter() {
           }
 
           // Setup this pass
+          if (onProgress) {
+             const totalSteps = angles.length * passes;
+             const currentStep = step * passes + currentPass;
+             onProgress(Math.round((currentStep / totalSteps) * 100));
+          }
+
           ambientLights.forEach(l => {
              l.visible = (currentPass === 0);
           });
@@ -518,6 +524,7 @@ export default function StudioClient() {
   const [placedLights, setPlacedLights] = useState<PlacedLight[]>([]);
   const [selectedLightId, setSelectedLightId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generateProgress, setGenerateProgress] = useState(0);
   const [rulerUnit, setRulerUnit] = useState<'ft' | 'm'>('ft');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginForm, setLoginForm] = useState({ username: '', password: '', error: '' });
@@ -614,10 +621,11 @@ export default function StudioClient() {
 
   const handleGenerateReport = async () => {
     setIsGenerating(true);
+    setGenerateProgress(0);
     try {
       const renders = await new Promise<string[]>((resolve) => {
         if ((window as any).takeSequenceScreenshots) {
-          (window as any).takeSequenceScreenshots(resolve);
+          (window as any).takeSequenceScreenshots(resolve, setGenerateProgress);
         } else {
           resolve([]);
         }
@@ -702,6 +710,7 @@ export default function StudioClient() {
       alert("Error generating report. Check console.");
     }
     setIsGenerating(false);
+    setGenerateProgress(0);
   };
 
   if (!isAuthenticated) {
@@ -965,7 +974,12 @@ export default function StudioClient() {
           onClick={handleGenerateReport}
           disabled={isGenerating}
         >
-          {isGenerating ? t('studio.generating') : t('studio.generateReport')}
+          {isGenerating ? `${t('studio.generating')} ${generateProgress}%` : t('studio.generateReport')}
+          {isGenerating && (
+            <div style={{ width: '100%', height: '4px', background: '#333', marginTop: '8px', borderRadius: '2px', overflow: 'hidden' }}>
+              <div style={{ width: `${generateProgress}%`, height: '100%', background: '#d4af37', transition: 'width 0.2s' }} />
+            </div>
+          )}
         </button>
       </div>
 

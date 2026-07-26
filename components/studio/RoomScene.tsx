@@ -1,7 +1,5 @@
 'use client';
-
-import { DoubleSide } from 'three';
-
+import React from 'react';
 interface RoomSceneProps {
   roomId: string;
   dimensions: { width: number; length: number; height: number };
@@ -64,31 +62,31 @@ export default function RoomScene({ roomId, dimensions, wallColor = '#eeeeee', o
       {/* Back Wall */}
       <mesh position={[0, height / 2, -length / 2]} receiveShadow onClick={onWallClick}>
         <planeGeometry args={[width, height]} />
-        <meshStandardMaterial color={wallColor} side={DoubleSide} />
+        <meshStandardMaterial color={wallColor} />
       </mesh>
 
       {/* Left Wall */}
       <mesh rotation={[0, Math.PI / 2, 0]} position={[-width / 2, height / 2, 0]} receiveShadow onClick={onWallClick}>
         <planeGeometry args={[length, height]} />
-        <meshStandardMaterial color={wallColor} side={DoubleSide} />
+        <meshStandardMaterial color={wallColor} />
       </mesh>
 
       {/* Right Wall */}
       <mesh rotation={[0, -Math.PI / 2, 0]} position={[width / 2, height / 2, 0]} receiveShadow onClick={onWallClick}>
         <planeGeometry args={[length, height]} />
-        <meshStandardMaterial color={wallColor} side={DoubleSide} />
+        <meshStandardMaterial color={wallColor} />
       </mesh>
 
       {/* Front Wall */}
-      <mesh position={[0, height / 2, length / 2]} receiveShadow onClick={onWallClick}>
+      <mesh rotation={[0, Math.PI, 0]} position={[0, height / 2, length / 2]} receiveShadow onClick={onWallClick}>
         <planeGeometry args={[width, height]} />
-        <meshStandardMaterial color={wallColor} side={DoubleSide} />
+        <meshStandardMaterial color={wallColor} />
       </mesh>
 
       {/* Ceiling */}
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, height, 0]} receiveShadow onClick={onCeilingClick}>
         <planeGeometry args={[width, length]} />
-        <meshStandardMaterial color="#ffffff" roughness={0.9} side={DoubleSide} />
+        <meshStandardMaterial color="#ffffff" roughness={0.9} />
       </mesh>
     </group>
   );
