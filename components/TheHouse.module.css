@@ -16,7 +16,7 @@
   font-family: var(--font-jp);
   font-size: clamp(15rem, 30vw, 35rem);
   font-weight: 400;
-  color: rgba(212, 175, 55, 0.02);
+  color: rgba(212, 175, 55, var(--watermark-opacity));
   line-height: 1;
   pointer-events: none;
   user-select: none;

@@ -24,7 +24,7 @@
   transform: translateY(-50%);
   font-family: var(--font-jp);
   font-size: 30vw;
-  color: rgba(212, 175, 55, 0.02);
+  color: rgba(212, 175, 55, var(--watermark-opacity));
   pointer-events: none;
   user-select: none;
   line-height: 1;

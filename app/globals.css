@@ -114,6 +114,8 @@
   --z-overlay:          500;
   --z-modal:            1000;
   --z-top:              9999;
+
+  --watermark-opacity:  0.02;
 }
 
 
@@ -705,48 +707,53 @@ footer {
 }
 
 /* Override CSS variables when lights are on (True Light Mode) */
+/* Override CSS variables when lights are on (True Light Mode) */
 html.lights-on {
-  --color-void:         #F9FAFB; /* Light grayish-white */
-  --color-rich:         #FFFFFF; /* Pure white */
-  --color-charcoal:     #F3F4F6; /* Light gray for borders/cards */
-  --color-soft:         #E5E7EB; /* Muted gray */
+  /* Museum Alabaster / Ivory Backgrounds */
+  --color-void:         #FDFBF7; 
+  --color-rich:         #FFFFFF; 
+  --color-charcoal:     #F3F0E9; 
+  --color-soft:         #E8E3DA; 
+
+  /* Fix for text colors: Invert warm/shimmer to dark elegant tones */
+  --color-warm:         #2C2724; /* Rich Espresso for body text */
+  --color-shimmer:      #A67C00; /* Caramel Gold for taglines */
+  --color-muted:        #6B625C; /* Muted Taupe */
+  --color-champagne:    #C59323; /* Brightened Gold */
+  --color-metallic:     #B8860B;
+  --color-pale:         #E6C875;
 
   --bg-primary:         var(--color-void);
   --bg-secondary:       var(--color-rich);
   --bg-elevated:        var(--color-rich);
   --bg-surface:         var(--color-charcoal);
   
-  --text-primary:       #111827; /* Dark slate text */
-  --text-secondary:     #4B5563; /* Muted dark text */
-  --text-bright:        #000000; /* Pure black for headings */
+  --text-primary:       var(--color-warm);
+  --text-secondary:     var(--color-muted);
+  --text-bright:        #1A1715; /* Near black for headings */
   
-  --border-subtle:      1px solid rgba(0, 0, 0, 0.08);
-  --border-accent:      1px solid rgba(212, 175, 55, 0.5);
+  --border-subtle:      1px solid rgba(166, 124, 0, 0.15);
+  --border-accent:      1px solid rgba(166, 124, 0, 0.4);
   
-  --shadow-elevation:   0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-elevation:   0 12px 40px rgba(44, 39, 36, 0.08);
+
+  --watermark-opacity:  0.06;
 }
 
-/* Warm ambient glow overlay on body */
+/* Warm ambient sunlight glow overlay on body */
 html.lights-on body::after {
   content: '';
   position: fixed;
   inset: 0;
   background: radial-gradient(
-    ellipse at 50% 30%,
-    rgba(212, 175, 55, 0.08) 0%,
-    rgba(212, 175, 55, 0.03) 40%,
-    transparent 70%
+    ellipse at 50% 0%,
+    rgba(212, 175, 55, 0.12) 0%,
+    rgba(212, 175, 55, 0.04) 50%,
+    transparent 80%
   );
   pointer-events: none;
   z-index: 9990;
   animation: lightsOnFade 0.8s ease forwards;
-}
-
-/* Brighten gold accents */
-html.lights-on {
-  --color-champagne: #e0c04a;
-  --color-metallic:  #d4b563;
-  --color-pale:      #f0dfb5;
 }
 
 /* Glow around section headings */
