@@ -353,22 +353,22 @@ export async function generatePDFReport({
         { 
           color: [248, 250, 252], 
           lux: "< 50 lx", 
-          desc: ["Navigating a hallway,", "or cozy home movie night"]
+          desc: "Visual navigation & safe movement in corridors. Not suitable for reading or visual tasks."
         },
         { 
           color: [186, 230, 253], 
           lux: "~100-200 lx", 
-          desc: ["Relaxing in a living room,", "reading a book comfortably"]
+          desc: "Casual ambient tasks. Comfortable for relaxing, dining, or reading with large print."
         },
         { 
           color: [134, 239, 172], 
           lux: "300-500 lx", 
-          desc: ["Ideal for focused desk work,", "like a modern office space"]
+          desc: "Standard visual tasks. Ideal for prolonged reading, office work, and food preparation."
         },
         { 
           color: [254, 240, 138], 
           lux: "750+ lx", 
-          desc: ["High precision tasking,", "feels like bright studio lights"]
+          desc: "High precision tasking. Required for technical drafting, surgery, and retail displays."
         }
       ];
       
@@ -388,11 +388,12 @@ export async function generatePDFReport({
         doc.text(item.lux, legX + 13, legendY + 7);
         
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(7);
+        doc.setFontSize(6.5);
         doc.setTextColor(80, 80, 80);
-        item.desc.forEach((line, i) => {
-          doc.text(line, legX + 13, legendY + 10.5 + (i * 3));
-        });
+        
+        // Use jsPDF's built-in text wrapper. Width = legStep - 15 (padding)
+        const splitDesc = doc.splitTextToSize(item.desc, legStep - 15);
+        doc.text(splitDesc, legX + 13, legendY + 11);
         
         legX += legStep;
       });
