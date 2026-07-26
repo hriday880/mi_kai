@@ -34,12 +34,10 @@ export default function ProductClient({ product }: { product: Product }) {
   const getLightStyles = () => {
     if (!activeSpec) return { opacity: 0, '--light-tint': activeCCT.hex, '--reflector-tint': activeFinish?.hex || '#FFF' } as React.CSSProperties;
     
-    const wattageNum = parseInt(activeSpec.wattage);
-    // Max wattage is 18, base opacity scales up
-    const intensity = Math.min((wattageNum / 18) * 0.85 + 0.15, 1);
+    const wattageNum = parseInt(activeSpec.wattage) || 10;
     
     return {
-      opacity: intensity,
+      '--wattage': wattageNum,
       '--light-tint': activeCCT.hex,
       '--reflector-tint': activeFinish?.hex || '#FFF',
       '--beam-angle': `${activeSpec.beamAngle}deg`,
@@ -151,7 +149,7 @@ export default function ProductClient({ product }: { product: Product }) {
                             <td>{spec.size}</td>
                             <td>{spec.cutOut}</td>
                             <td>{spec.beamAngle}°</td>
-                            <td className={styles.centerAlign}>
+                            <td className={styles.centerAlign} style={{ position: 'relative' }}>
                               <button 
                                 className={`${styles.switchButton} ${isActive ? styles.switchOn : ''}`}
                                 onClick={() => setActiveSpecIndex(isActive ? null : i)}
@@ -159,6 +157,28 @@ export default function ProductClient({ product }: { product: Product }) {
                               >
                                 <div className={styles.switchHandle} />
                               </button>
+                              
+                              {/* Floating Interactive Testing Chamber */}
+                              {isActive && (
+                                <div className={styles.floatingChamber}>
+                                  <div className={styles.chamberTitle}>Live Preview</div>
+                                  <div 
+                                    className={styles.testingChamber}
+                                    onPointerMove={handlePointerMove}
+                                    onPointerLeave={handlePointerLeave}
+                                    style={getLightStyles()}
+                                  >
+                                    <div className={styles.lightSource} style={{ left: `${panX}%` }}>
+                                      <div className={`${styles.lightSpill} ${styles.lightConeActive}`} />
+                                      <div className={`${styles.lightCone} ${styles.lightConeActive}`} />
+                                    </div>
+                                    
+                                    <div className={styles.chamberFloor}>
+                                      <div className={`${styles.floorHighlight} ${styles.floorHighlightActive}`} style={{ left: `${panX}%` }} />
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
                             </td>
                           </tr>
                         );
@@ -167,31 +187,6 @@ export default function ProductClient({ product }: { product: Product }) {
                   </table>
                 </div>
               </div>
-
-              {/* Interactive Testing Chamber (Mini) */}
-              <div className={styles.chamberWrapper}>
-                <h2 className="text-heading text-xl text-bright mb-6">Live Preview</h2>
-                <div 
-                  className={styles.testingChamber}
-                  onPointerMove={handlePointerMove}
-                  onPointerLeave={handlePointerLeave}
-                  style={getLightStyles()}
-                >
-                  <div className={styles.chamberInstruction}>
-                    {activeSpec ? '' : 'Turn on a switch'}
-                  </div>
-                  
-                  <div className={styles.lightSource} style={{ left: `${panX}%` }}>
-                    <div className={`${styles.lightSpill} ${activeSpec ? styles.lightConeActive : ''}`} />
-                    <div className={`${styles.lightCone} ${activeSpec ? styles.lightConeActive : ''}`} />
-                  </div>
-                  
-                  <div className={styles.chamberFloor}>
-                    <div className={`${styles.floorHighlight} ${activeSpec ? styles.floorHighlightActive : ''}`} style={{ left: `${panX}%` }} />
-                  </div>
-                </div>
-              </div>
-              
             </div>
           </div>
         </div>

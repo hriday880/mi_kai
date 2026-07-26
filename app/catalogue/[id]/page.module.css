@@ -7,15 +7,37 @@
 }
 
 /* Interactive Testing Chamber */
-.chamberWrapper {
-  flex: 0 0 350px;
+.floatingChamber {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%) translateX(20px);
+  width: 250px;
+  height: 250px;
   perspective: 1000px;
+  z-index: 100;
+  animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(-50%) translateX(10px) scale(0.95); }
+  to { opacity: 1; transform: translateY(-50%) translateX(20px) scale(1); }
+}
+
+.chamberTitle {
+  position: absolute;
+  top: -24px;
+  left: 0;
+  color: var(--color-champagne);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  white-space: nowrap;
 }
 
 .testingChamber {
   position: relative;
   width: 100%;
-  height: 350px;
+  height: 100%;
   background: linear-gradient(180deg, #050505 0%, #111 100%);
   border-radius: var(--radius-xl);
   overflow: hidden;
@@ -69,7 +91,7 @@
   top: 5px;
   left: 50%;
   width: 200vw;
-  height: 350px;
+  height: 100%;
   transform: translateX(-50%);
   transform-origin: top center;
   background: conic-gradient(
@@ -83,7 +105,7 @@
   );
   opacity: 0;
   pointer-events: none;
-  mix-blend-mode: screen;
+  mix-blend-mode: plus-lighter;
   transition: opacity 0.5s ease;
   filter: blur(5px);
 }
@@ -94,7 +116,7 @@
   top: 5px;
   left: 50%;
   width: 200vw;
-  height: 350px;
+  height: 100%;
   transform: translateX(-50%);
   transform-origin: top center;
   background: conic-gradient(
@@ -114,7 +136,8 @@
 }
 
 .lightConeActive {
-  opacity: var(--opacity, 1);
+  /* Scale opacity up with wattage: 10W -> 0.7, 18W -> 1.0+ */
+  opacity: calc(0.3 + (var(--wattage, 10) / 25));
 }
 
 .chamberFloor {
@@ -139,7 +162,7 @@
   transform: translate(-50%, -50%);
   opacity: 0;
   transition: left 0.1s ease-out, opacity 0.5s ease;
-  mix-blend-mode: screen;
+  mix-blend-mode: plus-lighter;
   filter: blur(10px);
 }
 /* Also add a reflector glow on the floor */
@@ -148,13 +171,13 @@
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background: radial-gradient(ellipse at center, var(--reflector-tint) 0%, transparent 70%);
-  mix-blend-mode: screen;
+  mix-blend-mode: plus-lighter;
   opacity: 0.5;
   filter: blur(20px);
 }
 
 .floorHighlightActive {
-  opacity: calc(var(--opacity, 1) * 0.8);
+  opacity: calc(0.2 + (var(--wattage, 10) / 20));
 }
 
 /* Hero Section */
