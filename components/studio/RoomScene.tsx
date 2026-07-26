@@ -78,6 +78,18 @@ export default function RoomScene({ roomId, dimensions, wallColor = '#eeeeee', o
         <planeGeometry args={[length, height]} />
         <meshStandardMaterial color={wallColor} side={DoubleSide} />
       </mesh>
+
+      {/* Front Wall */}
+      <mesh position={[0, height / 2, length / 2]} receiveShadow onClick={onWallClick}>
+        <planeGeometry args={[width, height]} />
+        <meshStandardMaterial color={wallColor} side={DoubleSide} />
+      </mesh>
+
+      {/* Ceiling */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, height, 0]} receiveShadow onClick={onCeilingClick}>
+        <planeGeometry args={[width, length]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.9} side={DoubleSide} />
+      </mesh>
     </group>
   );
 }

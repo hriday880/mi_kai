@@ -24,7 +24,8 @@
   flex: 1;
   position: relative;
   height: 100%;
-  background: radial-gradient(circle at center, #2a2a2a 0%, #000000 100%);
+  background: #0a0e17;
+  overflow: hidden;
 }
 
 .header {

@@ -219,23 +219,49 @@ const REFLECTOR_COLORS = [
   { name: 'Chrome', hex: '#e0e0e0' }
 ];
 
+// Helper: get fixture diameter in mm from product specs for the active wattage
+function getFixtureSizeMM(productId: string, wattage: number): number {
+  const product = productsData.find(p => p.id === productId);
+  if (!product?.specifications) return 60; // fallback 60mm
+  const spec = product.specifications.find(s => parseInt(s.wattage) === wattage);
+  if (!spec?.size) return 60;
+  // size format: "70x50" (diameter x depth in mm)
+  const diameterStr = spec.size.split('x')[0];
+  return parseInt(diameterStr) || 60;
+}
+
+// Helper: get beam angle for a specific wattage
+function getBeamAngleForWattage(productId: string, wattage: number): number {
+  const product = productsData.find(p => p.id === productId);
+  if (!product?.specifications) return 36;
+  const spec = product.specifications.find(s => parseInt(s.wattage) === wattage);
+  if (!spec?.beamAngle) return 36;
+  // Handle "24/36" format — take the first number
+  return parseInt(spec.beamAngle) || 36;
+}
+
 function CeilingGrid({ 
   dimensions, 
   placedLights, 
   selectedLightId, 
   onPlaceLight, 
-  onSelectLight 
+  onSelectLight,
+  rulerUnit 
 }: { 
   dimensions: { width: number; length: number; height: number }; 
   placedLights: PlacedLight[];
   selectedLightId: string | null;
   onPlaceLight: (x: number, z: number) => void;
   onSelectLight: (id: string) => void;
+  rulerUnit: 'ft' | 'm';
 }) {
   const { width, length } = dimensions; // in meters
-  const scale = 50;
+  const scale = 80; // increased scale for more precision
+  const rulerW = 40; // ruler strip width in viewBox units
   const vbW = width * scale;
   const vbH = length * scale;
+  const totalW = vbW + rulerW;
+  const totalH = vbH + rulerW;
 
   const handleSvgClick = (e: React.MouseEvent<SVGSVGElement>) => {
     const svg = e.currentTarget;
@@ -248,21 +274,126 @@ function CeilingGrid({
     
     const cursorPt = pt.matrixTransform(ctm.inverse());
     
-    // cursorPt is in viewBox coords from 0 to vbW.
-    // Convert to world coords (-width/2 to +width/2)
-    const worldX = (cursorPt.x / scale) - (width / 2);
-    const worldZ = (cursorPt.y / scale) - (length / 2);
+    // Offset by ruler strip
+    const gridX = cursorPt.x - rulerW;
+    const gridY = cursorPt.y - rulerW;
+    
+    // Ignore clicks on the ruler strip itself
+    if (gridX < 0 || gridY < 0 || gridX > vbW || gridY > vbH) return;
+    
+    const worldX = (gridX / scale) - (width / 2);
+    const worldZ = (gridY / scale) - (length / 2);
     onPlaceLight(worldX, worldZ);
   };
 
-  // Generate grid lines every 0.5m
-  const lines = [];
-  for (let x = 0.5; x < width; x += 0.5) {
-    lines.push(<line key={`vx-${x}`} x1={x * scale} y1={0} x2={x * scale} y2={vbH} stroke="#e0e0e0" strokeWidth={x % 1 === 0 ? "1.5" : "0.5"} />);
+  // Generate ruler ticks
+  const topRulerTicks: JSX.Element[] = [];
+  const leftRulerTicks: JSX.Element[] = [];
+
+  if (rulerUnit === 'ft') {
+    // Feet + inches: major tick every 1ft, minor every 6in
+    const widthFt = width * 3.28084;
+    const lengthFt = length * 3.28084;
+    const ftScale = scale / 3.28084; // viewBox units per foot
+    
+    for (let ft = 0; ft <= Math.ceil(widthFt); ft++) {
+      const x = rulerW + ft * ftScale;
+      if (x > rulerW + vbW + 1) break;
+      topRulerTicks.push(
+        <g key={`tft-${ft}`}>
+          <line x1={x} y1={rulerW - 15} x2={x} y2={rulerW} stroke="#d4af37" strokeWidth="1" />
+          <text x={x} y={rulerW - 18} fill="#aaa" fontSize="9" textAnchor="middle" fontFamily="monospace">{ft}&apos;</text>
+        </g>
+      );
+      // 6-inch minor tick
+      const halfX = x + ftScale / 2;
+      if (halfX < rulerW + vbW) {
+        topRulerTicks.push(
+          <line key={`tft6-${ft}`} x1={halfX} y1={rulerW - 8} x2={halfX} y2={rulerW} stroke="#666" strokeWidth="0.5" />
+        );
+      }
+    }
+    for (let ft = 0; ft <= Math.ceil(lengthFt); ft++) {
+      const y = rulerW + ft * ftScale;
+      if (y > rulerW + vbH + 1) break;
+      leftRulerTicks.push(
+        <g key={`lft-${ft}`}>
+          <line x1={rulerW - 15} y1={y} x2={rulerW} y2={y} stroke="#d4af37" strokeWidth="1" />
+          <text x={rulerW - 18} y={y + 3} fill="#aaa" fontSize="9" textAnchor="end" fontFamily="monospace">{ft}&apos;</text>
+        </g>
+      );
+      const halfY = y + ftScale / 2;
+      if (halfY < rulerW + vbH) {
+        leftRulerTicks.push(
+          <line key={`lft6-${ft}`} x1={rulerW - 8} y1={halfY} x2={rulerW} y2={halfY} stroke="#666" strokeWidth="0.5" />
+        );
+      }
+    }
+  } else {
+    // Metric: major tick every 1m, minor every 0.5m
+    for (let m = 0; m <= Math.ceil(width); m++) {
+      const x = rulerW + m * scale;
+      if (x > rulerW + vbW + 1) break;
+      topRulerTicks.push(
+        <g key={`tm-${m}`}>
+          <line x1={x} y1={rulerW - 15} x2={x} y2={rulerW} stroke="#d4af37" strokeWidth="1" />
+          <text x={x} y={rulerW - 18} fill="#aaa" fontSize="9" textAnchor="middle" fontFamily="monospace">{m}m</text>
+        </g>
+      );
+      const halfX = x + scale / 2;
+      if (halfX < rulerW + vbW) {
+        topRulerTicks.push(
+          <line key={`tm5-${m}`} x1={halfX} y1={rulerW - 8} x2={halfX} y2={rulerW} stroke="#666" strokeWidth="0.5" />
+        );
+      }
+    }
+    for (let m = 0; m <= Math.ceil(length); m++) {
+      const y = rulerW + m * scale;
+      if (y > rulerW + vbH + 1) break;
+      leftRulerTicks.push(
+        <g key={`lm-${m}`}>
+          <line x1={rulerW - 15} y1={y} x2={rulerW} y2={y} stroke="#d4af37" strokeWidth="1" />
+          <text x={rulerW - 18} y={y + 3} fill="#aaa" fontSize="9" textAnchor="end" fontFamily="monospace">{m}m</text>
+        </g>
+      );
+      const halfY = y + scale / 2;
+      if (halfY < rulerW + vbH) {
+        leftRulerTicks.push(
+          <line key={`lm5-${m}`} x1={rulerW - 8} y1={halfY} x2={rulerW} y2={halfY} stroke="#666" strokeWidth="0.5" />
+        );
+      }
+    }
   }
-  for (let y = 0.5; y < length; y += 0.5) {
-    lines.push(<line key={`vy-${y}`} x1={0} y1={y * scale} x2={vbW} y2={y * scale} stroke="#e0e0e0" strokeWidth={y % 1 === 0 ? "1.5" : "0.5"} />);
+
+  // Grid lines within the drawing area
+  const gridLines: JSX.Element[] = [];
+  const gridStep = rulerUnit === 'ft' ? (scale / 3.28084) : (scale / 2); // 1ft or 0.5m
+  const majorStep = rulerUnit === 'ft' ? gridStep : scale; // every 1ft or 1m
+  
+  for (let x = gridStep; x < vbW; x += gridStep) {
+    const isMajor = Math.abs(x % majorStep) < 0.5;
+    gridLines.push(
+      <line key={`gv-${x}`} x1={rulerW + x} y1={rulerW} x2={rulerW + x} y2={rulerW + vbH} 
+        stroke={isMajor ? 'rgba(0, 180, 216, 0.25)' : 'rgba(0, 180, 216, 0.08)'} 
+        strokeWidth={isMajor ? '1' : '0.5'} />
+    );
   }
+  for (let y = gridStep; y < vbH; y += gridStep) {
+    const isMajor = Math.abs(y % majorStep) < 0.5;
+    gridLines.push(
+      <line key={`gh-${y}`} x1={rulerW} y1={rulerW + y} x2={rulerW + vbW} y2={rulerW + y} 
+        stroke={isMajor ? 'rgba(0, 180, 216, 0.25)' : 'rgba(0, 180, 216, 0.08)'} 
+        strokeWidth={isMajor ? '1' : '0.5'} />
+    );
+  }
+
+  // Dimension text
+  const widthLabel = rulerUnit === 'ft' 
+    ? `${mToFtIn(width).ft}'${mToFtIn(width).in}"`
+    : `${width.toFixed(2)}m`;
+  const lengthLabel = rulerUnit === 'ft'
+    ? `${mToFtIn(length).ft}'${mToFtIn(length).in}"`
+    : `${length.toFixed(2)}m`;
 
   return (
     <div style={{
@@ -271,40 +402,67 @@ function CeilingGrid({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '2rem',
-      background: '#f8f9fa' // Light blueprint background
+      padding: '1.5rem',
+      background: '#0a0e17'
     }}>
       <div style={{
         position: 'relative',
         width: '100%',
         maxWidth: '900px',
-        maxHeight: '90vh',
-        aspectRatio: `${width} / ${length}`,
-        background: '#ffffff',
-        boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-        border: '1px solid #d4af37'
+        maxHeight: '85vh',
+        aspectRatio: `${totalW} / ${totalH}`,
       }}>
         <svg 
           width="100%" 
           height="100%" 
-          viewBox={`0 0 ${vbW} ${vbH}`} 
+          viewBox={`0 0 ${totalW} ${totalH}`} 
           onClick={handleSvgClick}
           style={{ cursor: 'crosshair', display: 'block' }}
         >
-          {/* Grid */}
-          <rect width={vbW} height={vbH} fill="#ffffff" />
-          {lines}
+          {/* Background */}
+          <rect width={totalW} height={totalH} fill="#0d1b2a" rx="4" />
           
-          {/* Rulers / Measurements text */}
-          <text x={vbW / 2} y={-10} textAnchor="middle" fill="#888" fontSize="14">Width: {width.toFixed(2)}m</text>
-          <text x={-20} y={vbH / 2} textAnchor="middle" fill="#888" fontSize="14" transform={`rotate(-90, -20, ${vbH/2})`}>Length: {length.toFixed(2)}m</text>
+          {/* Ruler strips */}
+          <rect x={rulerW} y={0} width={vbW} height={rulerW} fill="#111827" />
+          <rect x={0} y={rulerW} width={rulerW} height={vbH} fill="#111827" />
+          <rect x={0} y={0} width={rulerW} height={rulerW} fill="#0f172a" />
+          
+          {/* Ruler tick marks */}
+          {topRulerTicks}
+          {leftRulerTicks}
+          
+          {/* Drawing area background */}
+          <rect x={rulerW} y={rulerW} width={vbW} height={vbH} fill="#0d1b2a" />
+          
+          {/* Room boundary */}
+          <rect x={rulerW} y={rulerW} width={vbW} height={vbH} fill="none" stroke="#e2e8f0" strokeWidth="2" />
+          
+          {/* Grid lines */}
+          {gridLines}
+          
+          {/* Dimension labels */}
+          <text x={rulerW + vbW / 2} y={rulerW + vbH + 20} fill="#d4af37" fontSize="12" textAnchor="middle" fontFamily="monospace" fontWeight="bold">
+            ← {widthLabel} →
+          </text>
+          <text x={rulerW + vbW + 20} y={rulerW + vbH / 2} fill="#d4af37" fontSize="12" textAnchor="middle" fontFamily="monospace" fontWeight="bold"
+            transform={`rotate(90, ${rulerW + vbW + 20}, ${rulerW + vbH / 2})`}>
+            ← {lengthLabel} →
+          </text>
 
-          {/* Placed Lights */}
+          {/* Placed Lights — size-accurate */}
           {placedLights.map(light => {
-            // Convert world coords to viewBox coords
-            const cx = (light.position[0] + (width / 2)) * scale;
-            const cy = (light.position[2] + (length / 2)) * scale;
+            const cx = rulerW + (light.position[0] + (width / 2)) * scale;
+            const cy = rulerW + (light.position[2] + (length / 2)) * scale;
             const isSelected = light.id === selectedLightId;
+            
+            // Get real fixture diameter from catalogue specs
+            const diameterMM = getFixtureSizeMM(light.productId, light.wattage);
+            // Convert mm to viewBox: mm / 1000 (to meters) * scale (viewBox units per meter)
+            const fixtureRadius = Math.max(3, (diameterMM / 1000) * scale / 2);
+            
+            // Beam cone indicator radius (proportional to beam angle)
+            const beamAngleRad = (light.beamAngle / 2) * (Math.PI / 180);
+            const coneRadius = Math.min(fixtureRadius * 4, dimensions.height * Math.tan(beamAngleRad) * scale / 2);
 
             return (
               <g 
@@ -313,17 +471,37 @@ function CeilingGrid({
                 onClick={(e) => { e.stopPropagation(); onSelectLight(light.id); }}
                 style={{ cursor: 'pointer' }}
               >
-                {/* Outer ring */}
+                {/* Beam spread indicator (faint circle) */}
                 <circle 
-                  r={12} 
-                  fill={isSelected ? "rgba(212, 175, 55, 0.2)" : "#ffffff"} 
-                  stroke={isSelected ? "#d4af37" : "#333"} 
-                  strokeWidth="2" 
+                  r={coneRadius} 
+                  fill="none" 
+                  stroke={isSelected ? 'rgba(212, 175, 55, 0.2)' : 'rgba(0, 180, 216, 0.1)'} 
+                  strokeWidth="1" 
+                  strokeDasharray="4 4" 
                 />
-                {/* Inner dot */}
-                <circle r={4} fill={isSelected ? "#d4af37" : "#333"} />
-                {/* Direction indicator for straight down (just a small cross) */}
-                <path d="M-6,0 L6,0 M0,-6 L0,6" stroke={isSelected ? "#d4af37" : "#333"} strokeWidth="1" opacity="0.5" />
+                
+                {/* Housing ring (actual fixture size) */}
+                <circle 
+                  r={fixtureRadius} 
+                  fill={isSelected ? 'rgba(212, 175, 55, 0.15)' : 'rgba(30, 58, 95, 0.6)'} 
+                  stroke={isSelected ? '#d4af37' : '#4a90d9'} 
+                  strokeWidth={isSelected ? '2' : '1.5'} 
+                />
+                
+                {/* Inner lens */}
+                <circle 
+                  r={fixtureRadius * 0.5} 
+                  fill={isSelected ? 'rgba(212, 175, 55, 0.4)' : 'rgba(0, 180, 216, 0.3)'} 
+                  stroke="none" 
+                />
+                
+                {/* Center dot */}
+                <circle r={1.5} fill={isSelected ? '#d4af37' : '#00b4d8'} />
+                
+                {/* Wattage label */}
+                <text y={fixtureRadius + 10} fill={isSelected ? '#d4af37' : '#8ab4f8'} fontSize="8" textAnchor="middle" fontFamily="monospace">
+                  {light.wattage}W
+                </text>
               </g>
             );
           })}
@@ -343,6 +521,7 @@ export default function StudioClient() {
   const [placedLights, setPlacedLights] = useState<PlacedLight[]>([]);
   const [selectedLightId, setSelectedLightId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [rulerUnit, setRulerUnit] = useState<'ft' | 'm'>('ft');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginForm, setLoginForm] = useState({ username: '', password: '', error: '' });
 
@@ -418,6 +597,14 @@ export default function StudioClient() {
   };
 
   const handleUpdateLight = (id: string, updates: Partial<PlacedLight>) => {
+    // If wattage changed, also sync beam angle from the product specs
+    if (updates.wattage !== undefined) {
+      const light = placedLights.find(l => l.id === id);
+      if (light) {
+        const newAngle = getBeamAngleForWattage(light.productId, updates.wattage);
+        updates = { ...updates, beamAngle: newAngle };
+      }
+    }
     setPlacedLights(prev => prev.map(l => l.id === id ? { ...l, ...updates } : l));
   };
 
@@ -752,12 +939,28 @@ export default function StudioClient() {
 
       {/* Main 2D Interactive Ceiling Blueprint */}
       <div className={styles.canvasContainer}>
+        {/* Unit toggle */}
+        <div style={{
+          position: 'absolute', top: '1rem', right: '1rem', zIndex: 20,
+          display: 'flex', gap: '0.25rem', background: 'rgba(13,27,42,0.9)', padding: '4px', borderRadius: '6px', border: '1px solid rgba(212,175,55,0.3)'
+        }}>
+          <button onClick={() => setRulerUnit('ft')} style={{
+            padding: '4px 12px', fontSize: '0.75rem', fontFamily: 'monospace', borderRadius: '4px', border: 'none', cursor: 'pointer',
+            background: rulerUnit === 'ft' ? '#d4af37' : 'transparent', color: rulerUnit === 'ft' ? '#000' : '#888'
+          }}>ft/in</button>
+          <button onClick={() => setRulerUnit('m')} style={{
+            padding: '4px 12px', fontSize: '0.75rem', fontFamily: 'monospace', borderRadius: '4px', border: 'none', cursor: 'pointer',
+            background: rulerUnit === 'm' ? '#d4af37' : 'transparent', color: rulerUnit === 'm' ? '#000' : '#888'
+          }}>m</button>
+        </div>
+
         <CeilingGrid 
           dimensions={dimensions}
           placedLights={placedLights}
           selectedLightId={selectedLightId}
           onPlaceLight={handlePlaceLight2D}
           onSelectLight={setSelectedLightId}
+          rulerUnit={rulerUnit}
         />
         
         <button 
@@ -770,7 +973,7 @@ export default function StudioClient() {
       </div>
 
       {/* Hidden 3D Environment for Render & Light Calculation */}
-      <div style={{ position: 'absolute', left: '-10000px', top: 0, width: '1920px', height: '1080px', pointerEvents: 'none' }}>
+      <div style={{ position: 'fixed', left: 0, top: 0, width: '1920px', height: '1080px', pointerEvents: 'none', visibility: 'hidden' }}>
         <Canvas 
           shadows="soft"
           camera={{ position: [0, dimensions.height * 0.8, dimensions.length], fov: 50 }}
