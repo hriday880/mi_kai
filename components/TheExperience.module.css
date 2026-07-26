@@ -62,8 +62,8 @@
 
 /* ─── Card ─── */
 .card {
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: var(--bg-elevated);
+  border: var(--border-subtle);
   border-top: 2px solid rgba(212, 175, 55, 0.5);
   padding: 48px 36px;
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
@@ -78,7 +78,7 @@
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(212, 175, 55, 0.08),
     0 0 0 1px rgba(212, 175, 55, 0.1);
-  border-top-color: #d4af37;
+  border-top-color: var(--color-champagne);
 }
 
 /* ─── Icon ─── */
@@ -96,7 +96,7 @@
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.4rem;
   font-weight: 400;
-  color: #ffffff;
+  color: var(--text-bright);
   letter-spacing: 0.04em;
   margin: 0 0 12px 0;
 }
@@ -110,7 +110,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 0.7rem;
   font-weight: 500;
-  color: #d4af37;
+  color: var(--color-champagne);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 16px;
@@ -122,7 +122,7 @@
   font-size: 0.92rem;
   font-weight: 300;
   line-height: 1.7;
-  color: rgba(245, 240, 232, 0.8);
+  color: var(--text-secondary);
   margin: 0;
 }
 
