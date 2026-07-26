@@ -219,17 +219,130 @@ const REFLECTOR_COLORS = [
   { name: 'Chrome', hex: '#e0e0e0' }
 ];
 
+function CeilingGrid({ 
+  dimensions, 
+  placedLights, 
+  selectedLightId, 
+  onPlaceLight, 
+  onSelectLight 
+}: { 
+  dimensions: { width: number; length: number; height: number }; 
+  placedLights: PlacedLight[];
+  selectedLightId: string | null;
+  onPlaceLight: (x: number, z: number) => void;
+  onSelectLight: (id: string) => void;
+}) {
+  const { width, length } = dimensions; // in meters
+  const scale = 50;
+  const vbW = width * scale;
+  const vbH = length * scale;
+
+  const handleSvgClick = (e: React.MouseEvent<SVGSVGElement>) => {
+    const svg = e.currentTarget;
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX;
+    pt.y = e.clientY;
+    
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return;
+    
+    const cursorPt = pt.matrixTransform(ctm.inverse());
+    
+    // cursorPt is in viewBox coords from 0 to vbW.
+    // Convert to world coords (-width/2 to +width/2)
+    const worldX = (cursorPt.x / scale) - (width / 2);
+    const worldZ = (cursorPt.y / scale) - (length / 2);
+    onPlaceLight(worldX, worldZ);
+  };
+
+  // Generate grid lines every 0.5m
+  const lines = [];
+  for (let x = 0.5; x < width; x += 0.5) {
+    lines.push(<line key={`vx-${x}`} x1={x * scale} y1={0} x2={x * scale} y2={vbH} stroke="#e0e0e0" strokeWidth={x % 1 === 0 ? "1.5" : "0.5"} />);
+  }
+  for (let y = 0.5; y < length; y += 0.5) {
+    lines.push(<line key={`vy-${y}`} x1={0} y1={y * scale} x2={vbW} y2={y * scale} stroke="#e0e0e0" strokeWidth={y % 1 === 0 ? "1.5" : "0.5"} />);
+  }
+
+  return (
+    <div style={{
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem',
+      background: '#f8f9fa' // Light blueprint background
+    }}>
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        maxWidth: '900px',
+        maxHeight: '90vh',
+        aspectRatio: `${width} / ${length}`,
+        background: '#ffffff',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+        border: '1px solid #d4af37'
+      }}>
+        <svg 
+          width="100%" 
+          height="100%" 
+          viewBox={`0 0 ${vbW} ${vbH}`} 
+          onClick={handleSvgClick}
+          style={{ cursor: 'crosshair', display: 'block' }}
+        >
+          {/* Grid */}
+          <rect width={vbW} height={vbH} fill="#ffffff" />
+          {lines}
+          
+          {/* Rulers / Measurements text */}
+          <text x={vbW / 2} y={-10} textAnchor="middle" fill="#888" fontSize="14">Width: {width.toFixed(2)}m</text>
+          <text x={-20} y={vbH / 2} textAnchor="middle" fill="#888" fontSize="14" transform={`rotate(-90, -20, ${vbH/2})`}>Length: {length.toFixed(2)}m</text>
+
+          {/* Placed Lights */}
+          {placedLights.map(light => {
+            // Convert world coords to viewBox coords
+            const cx = (light.position[0] + (width / 2)) * scale;
+            const cy = (light.position[2] + (length / 2)) * scale;
+            const isSelected = light.id === selectedLightId;
+
+            return (
+              <g 
+                key={light.id} 
+                transform={`translate(${cx}, ${cy})`}
+                onClick={(e) => { e.stopPropagation(); onSelectLight(light.id); }}
+                style={{ cursor: 'pointer' }}
+              >
+                {/* Outer ring */}
+                <circle 
+                  r={12} 
+                  fill={isSelected ? "rgba(212, 175, 55, 0.2)" : "#ffffff"} 
+                  stroke={isSelected ? "#d4af37" : "#333"} 
+                  strokeWidth="2" 
+                />
+                {/* Inner dot */}
+                <circle r={4} fill={isSelected ? "#d4af37" : "#333"} />
+                {/* Direction indicator for straight down (just a small cross) */}
+                <path d="M-6,0 L6,0 M0,-6 L0,6" stroke={isSelected ? "#d4af37" : "#333"} strokeWidth="1" opacity="0.5" />
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 export default function StudioClient() {
   const { t, lang } = useLanguage();
   const [activePreset, setActivePreset] = useState<RoomPresetId>('bedroom');
   const [dimensions, setDimensions] = useState(roomPresetsData.bedroom.defaultDimensions);
   const [wallColor, setWallColor] = useState('#eeeeee');
-  const [viewMode, setViewMode] = useState('iso');
+  const [viewMode, setViewMode] = useState('top');
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [placedLights, setPlacedLights] = useState<PlacedLight[]>([]);
   const [selectedLightId, setSelectedLightId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [renderDataUrl, setRenderDataUrl] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginForm, setLoginForm] = useState({ username: '', password: '', error: '' });
 
@@ -257,7 +370,6 @@ export default function StudioClient() {
     let ft = type === 'ft' ? value : current.ft;
     let inc = type === 'in' ? value : current.in;
     
-    // Auto-carry inches to feet if >= 12, or just allow it (standard is to carry)
     if (inc >= 12) {
       ft += Math.floor(inc / 12);
       inc = inc % 12;
@@ -271,14 +383,12 @@ export default function StudioClient() {
     }
   };
 
-  const handleFloorClick = (e: any) => {
+  // Updated to support direct 2D placement
+  const handlePlaceLight2D = (worldX: number, worldZ: number) => {
     if (!selectedProductId) {
       setSelectedLightId(null);
       return;
     }
-    
-    // Stop event from bubbling
-    e.stopPropagation();
 
     const product = productsData.find(p => p.id === selectedProductId);
     if (!product) return;
@@ -291,14 +401,12 @@ export default function StudioClient() {
       ? parseInt(product.specifications[0].wattage) || 10
       : 10;
 
-    // Place light directly above the clicked floor position at the ceiling height
-    // If it's outdoor, default to 3 meters height
     const lightY = currentPreset.hasCeiling ? dimensions.height : 3;
 
     const newLight: PlacedLight = {
       id: Math.random().toString(36).substring(7),
       productId: selectedProductId,
-      position: [e.point.x, lightY, e.point.z],
+      position: [worldX, lightY, worldZ],
       wattage: defaultWattage,
       colorTemp: 3000,
       beamAngle: defaultBeamAngle,
@@ -323,7 +431,6 @@ export default function StudioClient() {
   const handleGenerateReport = async () => {
     setIsGenerating(true);
     try {
-      // 1. Take 3D screenshot sequence
       const renders = await new Promise<string[]>((resolve) => {
         if ((window as any).takeSequenceScreenshots) {
           (window as any).takeSequenceScreenshots(resolve);
@@ -332,7 +439,6 @@ export default function StudioClient() {
         }
       });
 
-      // 2. Calculate Lux for ALL Surfaces
       const lightsData = placedLights.map(l => ({
         position: l.position,
         wattage: l.wattage,
@@ -393,11 +499,8 @@ export default function StudioClient() {
       }
 
       const surfaceResults = surfaces.map(s => calculateSurfaceLux(s, lightsData, gs));
-
-      // 3. Generate Recommendations (based on floor and walls)
       const recommendation = generateRecommendations(activePreset, surfaceResults, placedLights, t);
 
-      // 4. Build Multi-Surface PDF
       await generatePDFReport({
         roomId: activePreset,
         dimensions,
@@ -457,7 +560,7 @@ export default function StudioClient() {
         <div className={styles.header}>
           <h1>{t('studio.title').toUpperCase()}</h1>
           <p style={{ fontSize: '0.8rem', color: '#d4af37', marginTop: '0.5rem' }}>
-            {t('studio.dragHint')}
+            Select a product below, then click on the ceiling grid to place lights.
           </p>
         </div>
 
@@ -480,7 +583,6 @@ export default function StudioClient() {
           <h2>{t('studio.roomDimensions')}</h2>
           <div className={styles.dimensions} style={{ marginBottom: '1rem' }}>
             
-            {/* WIDTH INPUT */}
             <div className={styles.inputGroup}>
               <label>{t('studio.width')}</label>
               <div style={{ display: 'flex', gap: '4px' }}>
@@ -505,7 +607,6 @@ export default function StudioClient() {
               </div>
             </div>
 
-            {/* LENGTH INPUT */}
             <div className={styles.inputGroup}>
               <label>{t('studio.length')}</label>
               <div style={{ display: 'flex', gap: '4px' }}>
@@ -530,7 +631,6 @@ export default function StudioClient() {
               </div>
             </div>
 
-            {/* HEIGHT INPUT */}
             {currentPreset.hasCeiling && (
               <div className={styles.inputGroup}>
                 <label>{t('studio.height')}</label>
@@ -557,35 +657,11 @@ export default function StudioClient() {
               </div>
             )}
           </div>
-          {currentPreset.hasCeiling && (
-            <div className={styles.inputGroup}>
-              <label>Wall Color</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
-                <input 
-                  type="color"
-                  value={wallColor}
-                  onChange={(e) => setWallColor(e.target.value)}
-                  style={{ 
-                    width: '36px', height: '36px', 
-                    padding: 0, margin: 0,
-                    border: '1px solid #333', borderRadius: '4px', 
-                    cursor: 'pointer', background: 'transparent'
-                  }}
-                />
-                <span style={{ color: '#888', fontSize: '0.8rem', fontFamily: 'monospace', textTransform: 'uppercase' }}>
-                  {wallColor}
-                </span>
-              </div>
-            </div>
-          )}
         </div>
 
         {selectedLight ? (
           <div className={styles.section}>
             <h2>Selected Light Properties</h2>
-            <p style={{ fontSize: '0.8rem', color: '#d4af37', marginBottom: '1rem' }}>
-              <i>Click anywhere on the floor to move this light.</i>
-            </p>
             
             <div className={styles.inputGroup} style={{ marginBottom: '1.5rem' }}>
               <label>Reflector Finish</label>
@@ -674,33 +750,27 @@ export default function StudioClient() {
         )}
       </div>
 
+      {/* Main 2D Interactive Ceiling Blueprint */}
       <div className={styles.canvasContainer}>
-        {/* Camera View Controls */}
-        <div style={{ 
-          position: 'absolute', top: '1.5rem', left: '1.5rem', zIndex: 100, 
-          display: 'flex', gap: '0.5rem', background: 'rgba(0,0,0,0.5)', padding: '0.5rem', borderRadius: '8px', backdropFilter: 'blur(4px)',
-          flexWrap: 'wrap', maxWidth: 'calc(100% - 3rem)'
-        }}>
-          {['iso', 'top', 'front', 'side'].map(mode => (
-            <button
-              key={mode}
-              onClick={() => setViewMode(mode)}
-              style={{
-                background: viewMode === mode ? '#d4af37' : 'transparent',
-                color: viewMode === mode ? '#000' : '#fff',
-                border: '1px solid #d4af37',
-                padding: '0.25rem 0.75rem',
-                borderRadius: '4px',
-                fontSize: '0.8rem',
-                cursor: 'pointer',
-                textTransform: 'uppercase'
-              }}
-            >
-              {mode}
-            </button>
-          ))}
-        </div>
+        <CeilingGrid 
+          dimensions={dimensions}
+          placedLights={placedLights}
+          selectedLightId={selectedLightId}
+          onPlaceLight={handlePlaceLight2D}
+          onSelectLight={setSelectedLightId}
+        />
+        
+        <button 
+          className={styles.floatingButton} 
+          onClick={handleGenerateReport}
+          disabled={isGenerating}
+        >
+          {isGenerating ? t('studio.generating') : t('studio.generateReport')}
+        </button>
+      </div>
 
+      {/* Hidden 3D Environment for Render & Light Calculation */}
+      <div style={{ position: 'absolute', left: '-10000px', top: 0, width: '1920px', height: '1080px', pointerEvents: 'none' }}>
         <Canvas 
           shadows="soft"
           camera={{ position: [0, dimensions.height * 0.8, dimensions.length], fov: 50 }}
@@ -709,7 +779,6 @@ export default function StudioClient() {
           <CameraController viewMode={viewMode} />
           <Screenshotter />
           
-          {/* Base ambient light so we can see the room before placing lights */}
           <ambientLight intensity={0.2} />
           <directionalLight position={[5, 10, 5]} intensity={0.1} castShadow={false} />
 
@@ -718,20 +787,19 @@ export default function StudioClient() {
               roomId={activePreset}
               dimensions={dimensions} 
               wallColor={wallColor}
-              onFloorClick={handleFloorClick} 
-              onWallClick={handleFloorClick} // allow placing on walls for now
+              onFloorClick={() => {}} 
+              onWallClick={() => {}}
             />
           ) : (
             <OutdoorScene 
               dimensions={dimensions} 
               wallColor={wallColor}
               variant={activePreset}
-              onGroundClick={handleFloorClick}
-              onWallClick={() => setSelectedLightId(null)}
+              onGroundClick={() => {}}
+              onWallClick={() => {}}
             />
           )}
 
-          {/* Render placed lights */}
           {placedLights.map((light, index) => (
             <LuminaireGhost 
               key={light.id} 
@@ -741,28 +809,15 @@ export default function StudioClient() {
               beamAngle={light.beamAngle}
               reflectorColor={light.reflectorColor}
               selected={selectedLightId === light.id}
-              castShadow={index < 8} // WebGL limits us to 16 texture units total, restrict shadow casters
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedLightId(light.id);
-              }}
+              castShadow={index < 8}
             />
           ))}
 
-          {/* Camera controls */}
           <OrbitControls 
             target={[0, dimensions.height / 2, 0]} 
-            maxPolarAngle={Math.PI / 2 - 0.05} // Prevent camera from going under floor
+            maxPolarAngle={Math.PI / 2 - 0.05}
           />
         </Canvas>
-
-        <button 
-          className={styles.floatingButton} 
-          onClick={handleGenerateReport}
-          disabled={isGenerating}
-        >
-          {isGenerating ? t('studio.generating') : t('studio.generateReport')}
-        </button>
       </div>
     </>
   );

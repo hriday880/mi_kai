@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -40,8 +41,17 @@ export default function LuminaireGhost({
   // Base render intensity on wattage. (Very rough scaling for WebGL aesthetics)
   const renderIntensity = Math.max(1, wattage * 0.8);
 
+  // Explicit target directly below the fixture (assuming floor is at y=0)
+  const targetObj = React.useMemo(() => {
+    const obj = new THREE.Object3D();
+    obj.position.set(position[0], 0, position[2]);
+    return obj;
+  }, [position[0], position[2]]);
+
   return (
     <group position={position} onClick={onClick}>
+      <primitive object={targetObj} />
+      
       {/* Visual representation of the fixture */}
       <mesh position={[0, 0, 0]}>
         <cylinderGeometry args={[0.05, 0.05, 0.1, 16]} />
@@ -65,9 +75,8 @@ export default function LuminaireGhost({
         castShadow={castShadow}
         shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.0001}
-      >
-        <object3D position={[0, -1, 0]} attach="target" />
-      </spotLight>
+        target={targetObj}
+      />
     </group>
   );
 }
