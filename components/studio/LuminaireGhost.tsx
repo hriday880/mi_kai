@@ -41,12 +41,12 @@ export default function LuminaireGhost({
   // Base render intensity on wattage. (Very rough scaling for WebGL aesthetics)
   const renderIntensity = Math.max(1, wattage * 0.8);
 
-  // Explicit target directly below the fixture (assuming floor is at y=0)
+  // Explicit target directly below the fixture (local coordinates)
   const targetObj = React.useMemo(() => {
     const obj = new THREE.Object3D();
-    obj.position.set(position[0], 0, position[2]);
+    obj.position.set(0, -1, 0);
     return obj;
-  }, [position[0], position[2]]);
+  }, []);
 
   return (
     <group position={position} onClick={onClick}>
