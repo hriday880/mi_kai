@@ -30,30 +30,28 @@ function ftInToM(ft: number, inc: number): number {
   return ((ft * 12) + inc) / 39.3701;
 }
 
-function CameraController({ viewMode }: { viewMode: string }) {
+function CameraController({ viewMode, dimensions }: { viewMode: string, dimensions: { width: number; length: number; height: number } }) {
   const { camera } = useThree();
-  useEffect(() => {
-    switch (viewMode) {
-      case 'top':
-        camera.position.set(0, 15, 0.1); // slight offset to prevent lookAt flipping
-        break;
-      case 'iso':
-        camera.position.set(-6, 8, 8);
-        break;
-      case 'front':
-        camera.position.set(0, 5, 12);
-        break;
-      case 'side':
-        camera.position.set(12, 5, 0);
-        break;
+  React.useEffect(() => {
+    const w = dimensions.width;
+    const l = dimensions.length;
+    const h = dimensions.height;
+    const maxDim = Math.max(w, l);
+
+    if (viewMode === 'top') {
+      camera.position.set(0.1, maxDim * 1.5, 0.1);
+    } else if (viewMode === 'iso') {
+      camera.position.set(-w * 1.2, h + maxDim * 0.5, l * 1.2);
+    } else if (viewMode === 'front') {
+      camera.position.set(0, h * 0.5, l * 1.5);
     }
     camera.lookAt(0, 0, 0);
-  }, [viewMode, camera]);
+  }, [viewMode, camera, dimensions]);
   return null;
 }
 
 // Helper component to capture screenshot sequence
-function Screenshotter() {
+function Screenshotter({ dimensions }: { dimensions: { width: number; length: number; height: number } }) {
   const { gl, scene, camera } = useThree();
   
   if (typeof window !== 'undefined') {
@@ -67,10 +65,15 @@ function Screenshotter() {
       gl.setPixelRatio(1.5);
       gl.shadowMap.type = THREE.PCFSoftShadowMap;
 
+      const w = dimensions.width;
+      const l = dimensions.length;
+      const h = dimensions.height;
+      const maxDim = Math.max(w, l);
+      
       const angles = [
-        new THREE.Vector3(0.1, 10, 0), // almost top down
-        new THREE.Vector3(-6, 6, 8),   // front left iso
-        new THREE.Vector3(6, 6, 8)     // front right iso
+        new THREE.Vector3(0.1, maxDim * 1.5, 0.1), // top down
+        new THREE.Vector3(-w * 1.2, h + maxDim * 0.5, l * 1.2),   // front left iso
+        new THREE.Vector3(w * 1.2, h + maxDim * 0.5, l * 1.2)     // front right iso
       ];
 
       let step = 0;
@@ -990,8 +993,8 @@ export default function StudioClient() {
           camera={{ position: [0, dimensions.height * 0.8, dimensions.length], fov: 50 }}
           gl={{ preserveDrawingBuffer: true, antialias: true, alpha: true }} 
         >
-          <CameraController viewMode={viewMode} />
-          <Screenshotter />
+          <CameraController viewMode={viewMode} dimensions={dimensions} />
+          <Screenshotter dimensions={dimensions} />
           
           <ambientLight intensity={0.2} />
           <directionalLight position={[5, 10, 5]} intensity={0.1} castShadow={false} />
