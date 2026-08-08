@@ -528,6 +528,8 @@ export default function StudioClient() {
   const [selectedLightId, setSelectedLightId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generateProgress, setGenerateProgress] = useState(0);
+  const [showClientModal, setShowClientModal] = useState(false);
+  const [clientInfo, setClientInfo] = useState({ name: '', number: '' });
   const [rulerUnit, setRulerUnit] = useState<'ft' | 'm'>('ft');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginForm, setLoginForm] = useState({ username: '', password: '', error: '' });
@@ -622,7 +624,12 @@ export default function StudioClient() {
 
   const selectedLight = placedLights.find(l => l.id === selectedLightId);
 
-  const handleGenerateReport = async () => {
+  const handleGenerateReportClick = () => {
+    setShowClientModal(true);
+  };
+
+  const confirmGenerateReport = async () => {
+    setShowClientModal(false);
     setIsGenerating(true);
     setGenerateProgress(0);
     try {
@@ -705,7 +712,9 @@ export default function StudioClient() {
         placedLights: placedLights,
         productsData,
         lang,
-        t
+        t,
+        clientName: clientInfo.name,
+        clientNumber: clientInfo.number
       });
 
     } catch (e) {
@@ -974,7 +983,7 @@ export default function StudioClient() {
         
         <button 
           className={styles.floatingButton} 
-          onClick={handleGenerateReport}
+          onClick={handleGenerateReportClick}
           disabled={isGenerating}
         >
           {isGenerating ? `${t('studio.generating')} ${generateProgress}%` : t('studio.generateReport')}
@@ -1036,6 +1045,56 @@ export default function StudioClient() {
           />
         </Canvas>
       </div>
+
+      {showClientModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+          background: 'rgba(0,0,0,0.8)', zIndex: 1000,
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{
+            background: '#111', padding: '2rem', borderRadius: '8px', border: '1px solid #333', width: '90%', maxWidth: '400px'
+          }}>
+            <h2 style={{ margin: '0 0 1.5rem 0', color: '#d4af37', fontWeight: 300, fontSize: '1.25rem' }}>Client Information (Optional)</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.8rem', color: '#888' }}>Client Name</label>
+                <input 
+                  type="text" 
+                  value={clientInfo.name} 
+                  onChange={e => setClientInfo({...clientInfo, name: e.target.value})}
+                  style={{ width: '100%', padding: '0.75rem', background: '#222', border: '1px solid #333', color: '#fff', borderRadius: '4px' }}
+                  placeholder="e.g. John Doe"
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.8rem', color: '#888' }}>Client Number / ID</label>
+                <input 
+                  type="text" 
+                  value={clientInfo.number} 
+                  onChange={e => setClientInfo({...clientInfo, number: e.target.value})}
+                  style={{ width: '100%', padding: '0.75rem', background: '#222', border: '1px solid #333', color: '#fff', borderRadius: '4px' }}
+                  placeholder="e.g. #1024 / +1 234 567 8900"
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <button 
+                  onClick={() => setShowClientModal(false)}
+                  style={{ flex: 1, padding: '0.75rem', background: '#333', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={confirmGenerateReport}
+                  style={{ flex: 1, padding: '0.75rem', background: '#d4af37', color: '#000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                >
+                  Generate Report
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

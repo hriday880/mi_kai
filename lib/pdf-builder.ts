@@ -62,7 +62,9 @@ export async function generatePDFReport({
   placedLights,
   productsData,
   lang,
-  t
+  t,
+  clientName,
+  clientNumber
 }: {
   roomId: string;
   dimensions: { width: number, length: number, height: number };
@@ -73,6 +75,8 @@ export async function generatePDFReport({
   productsData: Product[];
   lang: string;
   t: (key: string) => string;
+  clientName?: string;
+  clientNumber?: string;
 }) {
   const doc = new jsPDF({
     orientation: 'portrait',
@@ -132,22 +136,35 @@ export async function generatePDFReport({
   const hStr = mToFtIn(dimensions.height || 3);
   
   doc.text(`${t('pdf.dimensions')}: ${wStr} (W) x ${lStr} (L) x ${hStr} (H)`, 15, 60);
+
+  let currentY = 60;
+  if (clientName) {
+    currentY += 6;
+    doc.text(`Client Name: ${clientName}`, 15, currentY);
+  }
+  if (clientNumber) {
+    currentY += 6;
+    doc.text(`Client Number: ${clientNumber}`, 15, currentY);
+  }
+  
+  const rendersY = currentY + 10;
   
   // Draw Multiple Renders
   if (renderDataUrls && renderDataUrls.length > 0) {
     const mainImg = renderDataUrls[0];
-    doc.addImage(mainImg, 'JPEG', 15, 70, pageWidth - 30, 100, '', 'FAST');
+    doc.addImage(mainImg, 'JPEG', 15, rendersY, pageWidth - 30, 100, '', 'FAST');
     doc.setDrawColor(212, 175, 55);
     doc.setLineWidth(0.5);
-    doc.rect(15, 70, pageWidth - 30, 100);
+    doc.rect(15, rendersY, pageWidth - 30, 100);
 
     if (renderDataUrls.length >= 3) {
       const subWidth = (pageWidth - 35) / 2;
-      doc.addImage(renderDataUrls[1], 'JPEG', 15, 175, subWidth, 75, '', 'FAST');
-      doc.rect(15, 175, subWidth, 75);
+      const subY = rendersY + 105;
+      doc.addImage(renderDataUrls[1], 'JPEG', 15, subY, subWidth, 75, '', 'FAST');
+      doc.rect(15, subY, subWidth, 75);
       
-      doc.addImage(renderDataUrls[2], 'JPEG', 20 + subWidth, 175, subWidth, 75, '', 'FAST');
-      doc.rect(20 + subWidth, 175, subWidth, 75);
+      doc.addImage(renderDataUrls[2], 'JPEG', 20 + subWidth, subY, subWidth, 75, '', 'FAST');
+      doc.rect(20 + subWidth, subY, subWidth, 75);
     }
   }
 
@@ -344,7 +361,7 @@ export async function generatePDFReport({
     // --- Color Legend ---
     const legendY = gridStartY + boxH + 12;
     if (legendY < pageHeight - 20) {
-      doc.setFontSize(9);
+      doc.setFontSize(11);
       doc.setFont("helvetica", "bold");
       doc.setTextColor(30, 30, 30);
       doc.text("Color Legend (Illuminance / Activity)", 15, legendY);
@@ -377,23 +394,23 @@ export async function generatePDFReport({
       
       legendItems.forEach(item => {
         doc.setFillColor(item.color[0], item.color[1], item.color[2]);
-        doc.rect(legX, legendY + 4, 10, 10, 'F');
+        doc.rect(legX, legendY + 6, 12, 12, 'F');
         doc.setDrawColor(200, 200, 200);
         doc.setLineWidth(0.2);
-        doc.rect(legX, legendY + 4, 10, 10, 'S');
+        doc.rect(legX, legendY + 6, 12, 12, 'S');
         
-        doc.setFontSize(8);
+        doc.setFontSize(10);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(50, 50, 50);
-        doc.text(item.lux, legX + 13, legendY + 7);
+        doc.text(item.lux, legX + 16, legendY + 11);
         
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(6.5);
+        doc.setFontSize(8);
         doc.setTextColor(80, 80, 80);
         
-        // Use jsPDF's built-in text wrapper. Width = legStep - 15 (padding)
-        const splitDesc = doc.splitTextToSize(item.desc, legStep - 15);
-        doc.text(splitDesc, legX + 13, legendY + 11);
+        // Use jsPDF's built-in text wrapper. Width = legStep - 18 (padding)
+        const splitDesc = doc.splitTextToSize(item.desc, legStep - 18);
+        doc.text(splitDesc, legX + 16, legendY + 16);
         
         legX += legStep;
       });
