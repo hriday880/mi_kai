@@ -148,7 +148,8 @@ export function calculateSurfaceLux(
 export function getLuxColor(lux: number): string {
   if (lux < 50) return '#F8FAFC'; // < 50 lx: Walkway (Very Light Gray)
   if (lux < 200) return '#BAE6FD'; // ~100 lx: Ambient/Reading (Light Blue)
-  if (lux < 600) return '#86EFAC'; // 300-500 lx: Optimal/Perfect (Light Green)
+  if (lux < 500) return '#86EFAC'; // 300-500 lx: Optimal/Perfect (Light Green)
+  if (lux < 750) return '#FDBA74'; // 500-750 lx: Demanding tasks (Light Orange)
   return '#FEF08A'; // 750+ lx: Very Bright (Light Yellow)
 }
 

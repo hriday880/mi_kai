@@ -383,6 +383,11 @@ export async function generatePDFReport({
           desc: "Standard visual tasks. Ideal for prolonged reading, office work, and food preparation."
         },
         { 
+          color: [253, 186, 116], 
+          lux: "500-750 lx", 
+          desc: "Demanding visual tasks. Ideal for drafting, quality inspection, and intricate assembly."
+        },
+        { 
           color: [254, 240, 138], 
           lux: "750+ lx", 
           desc: "High precision tasking. Required for technical drafting, surgery, and retail displays."
@@ -390,7 +395,7 @@ export async function generatePDFReport({
       ];
       
       let legX = 15;
-      const legStep = (pageWidth - 30) / 4;
+      const legStep = (pageWidth - 30) / 5;
       
       legendItems.forEach(item => {
         doc.setFillColor(item.color[0], item.color[1], item.color[2]);
