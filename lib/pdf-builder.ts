@@ -226,8 +226,16 @@ export async function generatePDFReport({
   const powerDensity = (totalPower / roomArea).toFixed(2);
   doc.text(`${t('pdf.specificConnectedLoad')}: ${powerDensity} W/m²`, 15, finalY + 7);
 
+  // Pro-Tip
+  doc.setFillColor(250, 248, 235);
+  doc.rect(15, finalY + 12, pageWidth - 30, 12, 'F');
+  doc.setTextColor(150, 120, 30);
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(9);
+  doc.text("Pro Tip: A general rule of thumb for optimal residential lighting is approximately 1 Watt per 2 sq. feet.", 20, finalY + 19.5);
+
   // Recommendation status
-  finalY += 25;
+  finalY += 30;
   doc.setFillColor(recommendation.status === 'optimal' ? 230 : 255, recommendation.status === 'under' ? 230 : 255, 230);
   doc.rect(15, finalY, pageWidth - 30, 20, 'F');
   doc.setTextColor(30, 30, 30);
