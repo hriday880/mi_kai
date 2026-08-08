@@ -212,6 +212,8 @@
     "status": {
       "OPTIMAL": "OPTIMAL",
       "OVERLIT": "OVERLIT",
+      "OVER": "OVER",
+      "UNDER": "UNDERLIT",
       "SUBOPTIMAL": "SUBOPTIMAL",
       "POOR": "POOR",
       "INFO": "INFO",

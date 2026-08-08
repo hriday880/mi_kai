@@ -211,6 +211,8 @@
     "status": {
       "OPTIMAL": "最佳",
       "OVERLIT": "过度照明",
+      "OVER": "过度照明",
+      "UNDER": "照度不足",
       "SUBOPTIMAL": "次优",
       "POOR": "差",
       "INFO": "信息",
