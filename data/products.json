@@ -186,93 +186,6 @@
     }
   },
   {
-    "id": "004",
-    "category": "Downlight (Catch)",
-    "finishes": [
-      {
-        "id": "black",
-        "name": "Black",
-        "hex": "#000000"
-      },
-      {
-        "id": "white",
-        "name": "White",
-        "hex": "#FFFFFF"
-      }
-    ],
-    "specifications": [
-      {
-        "wattage": "7 WATT",
-        "size": "63x53",
-        "cutOut": "55",
-        "beamAngle": "36"
-      },
-      {
-        "wattage": "12 WATT",
-        "size": "83x65",
-        "cutOut": "75",
-        "beamAngle": "36"
-      },
-      {
-        "wattage": "18 WATT",
-        "size": "105x74",
-        "cutOut": "95",
-        "beamAngle": "36"
-      }
-    ],
-    "media": {
-      "video": "/videos/004-cinematic.mp4",
-      "thumbnail": "/images/products/004-main.png",
-      "technicalDrawing": "/images/products/004-tech.png"
-    }
-  },
-  {
-    "id": "005",
-    "category": "Downlight (Tepar)",
-    "finishes": [
-      {
-        "id": "white",
-        "name": "White",
-        "hex": "#FFFFFF"
-      },
-      {
-        "id": "black",
-        "name": "Black",
-        "hex": "#000000"
-      },
-      {
-        "id": "rose-gold",
-        "name": "Rose Gold",
-        "hex": "#B76E79"
-      }
-    ],
-    "specifications": [
-      {
-        "wattage": "7 WATT",
-        "size": "70x55",
-        "cutOut": "65",
-        "beamAngle": "36"
-      },
-      {
-        "wattage": "12 WATT",
-        "size": "80x68",
-        "cutOut": "75",
-        "beamAngle": "36"
-      },
-      {
-        "wattage": "18 WATT",
-        "size": "90x80",
-        "cutOut": "85",
-        "beamAngle": "36"
-      }
-    ],
-    "media": {
-      "video": "/videos/005-cinematic.mp4",
-      "thumbnail": "/images/products/005-main.png",
-      "technicalDrawing": "/images/products/005-tech.png"
-    }
-  },
-  {
     "id": "008",
     "category": "Downlight (Maxx)",
     "finishes": [
@@ -492,56 +405,6 @@
       "video": "/videos/010-cinematic.mp4",
       "thumbnail": "/images/products/010-main.png",
       "technicalDrawing": "/images/products/010-tech.png"
-    }
-  },
-  {
-    "id": "011",
-    "category": "Downlight (Butterfly)",
-    "finishes": [
-      {
-        "id": "matte-black",
-        "name": "Matte Black",
-        "hex": "#222222"
-      },
-      {
-        "id": "rose-gold",
-        "name": "Rose Gold",
-        "hex": "#B76E79"
-      },
-      {
-        "id": "matte-white",
-        "name": "Matte White",
-        "hex": "#F5F5F5"
-      },
-      {
-        "id": "gun-black",
-        "name": "Gun Black",
-        "hex": "#3A3A3A"
-      }
-    ],
-    "specifications": [
-      {
-        "wattage": "7 WATT",
-        "size": "65x46",
-        "cutOut": "60",
-        "beamAngle": "24"
-      },
-      {
-        "wattage": "12 WATT",
-        "size": "75x55",
-        "cutOut": "70",
-        "beamAngle": "24"
-      },
-      {
-        "wattage": "18 WATT",
-        "size": "90x57",
-        "cutOut": "85",
-        "beamAngle": "24"
-      }
-    ],
-    "media": {
-      "thumbnail": "/images/products/011-main.png",
-      "technicalDrawing": "/images/products/011-tech.png"
     }
   },
   {
@@ -1227,52 +1090,6 @@
     "media": {
       "thumbnail": "/images/products/025-main.png",
       "technicalDrawing": "/images/products/025-tech.png"
-    }
-  },
-  {
-    "id": "026",
-    "category": "Downlight (N-Surface)",
-    "finishes": [
-      {
-        "id": "white",
-        "name": "White",
-        "hex": "#FFFFFF"
-      },
-      {
-        "id": "black",
-        "name": "Black",
-        "hex": "#000000"
-      }
-    ],
-    "specifications": [
-      {
-        "wattage": "7 WATT",
-        "size": "72x65",
-        "cutOut": "72",
-        "beamAngle": "60"
-      },
-      {
-        "wattage": "12 WATT",
-        "size": "92x65",
-        "cutOut": "92",
-        "beamAngle": "60"
-      },
-      {
-        "wattage": "18 WATT",
-        "size": "122x65",
-        "cutOut": "122",
-        "beamAngle": "60"
-      },
-      {
-        "wattage": "24 WATT",
-        "size": "142x65",
-        "cutOut": "142",
-        "beamAngle": "60"
-      }
-    ],
-    "media": {
-      "thumbnail": "/images/products/026-main.png",
-      "technicalDrawing": "/images/products/026-tech.png"
     }
   },
   {
@@ -2046,34 +1863,6 @@
     "media": {
       "thumbnail": "/images/products/043-main.png",
       "technicalDrawing": "/images/products/043-tech.png"
-    }
-  },
-  {
-    "id": "044",
-    "category": "Stand Track Light",
-    "finishes": [
-      {
-        "id": "black",
-        "name": "Black",
-        "hex": "#000000"
-      },
-      {
-        "id": "white",
-        "name": "White",
-        "hex": "#FFFFFF"
-      }
-    ],
-    "specifications": [
-      {
-        "wattage": "50 WATT",
-        "size": "190x115",
-        "cutOut": "60",
-        "beamAngle": "36"
-      }
-    ],
-    "media": {
-      "thumbnail": "/images/products/044-main.png",
-      "technicalDrawing": "/images/products/044-tech.png"
     }
   }
 ]

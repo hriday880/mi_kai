@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;600&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #111111;
+            --gold-primary: #D4AF37;
+            --gold-glow: rgba(212, 175, 55, 0.5);
+            --gold-light: #F3E5AB;
+            --text-white: #FFFFFF;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            width: 5669px;
+            height: 2835px;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-white);
+            display: flex;
+            box-sizing: border-box;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .layout-1, .layout-3 { flex-direction: row; }
+        .layout-2, .layout-4 { flex-direction: row-reverse; }
+
+        .half {
+            width: 50%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 200px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .kanji-bg {
+            position: absolute;
+            font-family: 'Noto Serif JP', serif;
+            font-size: 2000px; /* Scaled for 200mm at 300DPI */
+            color: transparent;
+            -webkit-text-stroke: 10px var(--gold-primary);
+            text-shadow: 0 0 100px var(--gold-glow), 0 0 50px var(--gold-primary);
+            opacity: 0.6;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            white-space: nowrap;
+            width: 2362px;
+            height: 2362px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-img-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            width: 80%;
+            height: 80%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-img-container img {
+            max-width: 100%;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0px 0px 40px rgba(212, 175, 55, 0.8));
+        }
+
+        .content-side {
+            z-index: 10;
+        }
+
+        .title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 15rem;
+            color: var(--gold-primary);
+            margin: 0 0 100px 0;
+            text-align: right;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            line-height: 1;
+        }
+
+        .colors-grid {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 80px;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .color-box {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+            border: 2px solid var(--gold-primary);
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 15px;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .color-label {
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-shadow: 1px 1px 3px black;
+        }
+
+        .specs-title {
+            color: var(--gold-secondary);
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1.8rem;
+            margin-bottom: 80px;
+        }
+
+        .specs-table th {
+            background-color: var(--gold-secondary);
+            color: var(--bg-dark);
+            padding: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .specs-table td {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--gold-primary);
+        }
+
+        .tech-drawings {
+            display: flex;
+            gap: 40px;
+            justify-content: flex-start;
+        }
+
+        .tech-drawings img {
+            height: 300px;
+            object-fit: contain;
+        }
+        
+        .layout-3 .title, .layout-4 .title {
+            font-size: 500px;
+        }
+    </style>
+</head>
+<body class="layout-{{ layout_id }}">
+    <div class="container">
+        
+        <!-- Hero Side -->
+        <div class="half hero-side">
+            <div class="kanji-bg">{{ kanji }}</div>
+            <div class="hero-img-container">
+                {% if hero_image %}
+                <img src="{{ hero_image }}" alt="Hero Image">
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Content Side -->
+        <div class="half content-side">
+            <h1 class="title">{{ product_name }}</h1>
+            
+            <div class="colors-grid">
+                {% for color in colors %}
+                <div class="color-box" style="background-color: {{ color.hex }};">
+                    <span class="color-label">{{ color.name }}</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="specs-title">Product Specifications</div>
+            <table class="specs-table">
+                <tr>
+                    <th>WATT</th>
+                    <th>PRODUCT SIZE</th>
+                    <th>CUT OUT</th>
+                    <th>BEAM ANGLE</th>
+                    <th>PACKAGING</th>
+                </tr>
+                {% for spec in specifications %}
+                <tr>
+                    <td style="background-color: rgba(212, 175, 55, 0.2); color: var(--gold-primary); font-weight: bold;">{{ spec.watt }}</td>
+                    <td>{{ spec.size }}</td>
+                    <td>{{ spec.cutout }}</td>
+                    <td>{{ spec.beam }}</td>
+                    <td>{{ spec.packaging }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <div class="tech-drawings">
+                {% for drawing in tech_drawings %}
+                {% if drawing %}
+                <img src="{{ drawing }}" alt="Tech Drawing">
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

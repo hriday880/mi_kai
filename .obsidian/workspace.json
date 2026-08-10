@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "40de93eada7cd008",
+        "id": "7ffbcfd9a2c1d85c",
         "type": "tabs",
         "children": [
           {
-            "id": "d0e47c06bbfc30b9",
+            "id": "f906f5786df71377",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "memory/brand.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "brand"
+              "title": "New tab"
             }
           }
         ]
@@ -41,7 +37,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "Files"
@@ -180,8 +178,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "d0e47c06bbfc30b9",
+  "active": "f906f5786df71377",
   "lastOpenFiles": [
+    "memory/brand.md",
     "scripts/inject_i18n.py",
     "tsconfig.tsbuildinfo",
     "out/_next/static/chunks/417nv27u9xr5m.js",
@@ -192,7 +191,6 @@
     "out/_next/static/chunks/181m3u938e1ag.js",
     "out/_next/static/chunks/1oyu2lv9nd07e.css",
     "out/_next/static/chunks/11jqqlt-o2jd9.css",
-    "out/_next/static/chunks/0rh-flf3q14ht.js",
     "memory/studio.md",
     "memory/catalogue.md",
     "node_modules/resend/readme.md",

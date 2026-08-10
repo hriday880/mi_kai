@@ -15,7 +15,6 @@ export default function Navigation() {
   const isInnerPage = pathname !== '/';
 
   const { t, lang, setLang } = useLanguage();
-  const [visible, setVisible] = useState(isInnerPage);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
 
@@ -27,28 +26,7 @@ export default function Navigation() {
     { key: 'nav.theLiving', href: '#the-living' },
   ];
 
-  useEffect(() => {
-    if (isInnerPage) {
-      setVisible(true);
-      return;
-    }
-    
-    const handleScroll = () => {
-      // Show immediately or after a tiny scroll so it doesn't conflict with intro,
-      // but since intro is an overlay, we can just show it when scrolled even 10px.
-      setVisible(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    
-    // Also force it to be visible after 3 seconds in case they don't scroll
-    const timeout = setTimeout(() => setVisible(true), 3000);
 
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      clearTimeout(timeout);
-    };
-  }, [isInnerPage]);
 
   /* Lock body scroll when mobile menu is open */
   useEffect(() => {
@@ -89,7 +67,7 @@ export default function Navigation() {
     <>
       <nav
         ref={navRef}
-        className={`${styles.nav} ${visible ? styles.visible : ''}`}
+        className={`${styles.nav} ${styles.visible}`}
         role="navigation"
         aria-label="Main navigation"
       >

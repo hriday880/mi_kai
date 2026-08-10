@@ -318,7 +318,7 @@ export async function generatePDFReport({
     const gridStartX = 15;
     const gridStartY = 75; // Moved down to accommodate status box
     const maxBoxWidth = pageWidth - 30;
-    const maxBoxHeight = 160;
+    const maxBoxHeight = 135;
     
     // Scale
     const scaleX = maxBoxWidth / surface.surfaceWidth;

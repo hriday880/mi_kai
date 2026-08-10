@@ -953,25 +953,51 @@ export default function StudioClient() {
             onSelect={setSelectedProductId} 
           />
         )}
+
+        {/* Sticky Sidebar Footer */}
+        <div style={{
+          marginTop: 'auto', 
+          padding: '1.5rem', 
+          borderTop: '1px solid #333',
+          background: '#111',
+          position: 'sticky',
+          bottom: 0,
+          zIndex: 10
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <span style={{ fontSize: '0.9rem', color: '#888' }}>Unit System</span>
+            <div style={{
+              display: 'flex', gap: '0.25rem', background: '#222', padding: '4px', borderRadius: '6px', border: '1px solid #333'
+            }}>
+              <button onClick={() => setRulerUnit('ft')} style={{
+                padding: '4px 12px', fontSize: '0.75rem', fontFamily: 'monospace', borderRadius: '4px', border: 'none', cursor: 'pointer',
+                background: rulerUnit === 'ft' ? '#d4af37' : 'transparent', color: rulerUnit === 'ft' ? '#000' : '#888'
+              }}>ft/in</button>
+              <button onClick={() => setRulerUnit('m')} style={{
+                padding: '4px 12px', fontSize: '0.75rem', fontFamily: 'monospace', borderRadius: '4px', border: 'none', cursor: 'pointer',
+                background: rulerUnit === 'm' ? '#d4af37' : 'transparent', color: rulerUnit === 'm' ? '#000' : '#888'
+              }}>m</button>
+            </div>
+          </div>
+          
+          <button 
+            className={styles.reportButton} 
+            onClick={handleGenerateReportClick}
+            disabled={isGenerating}
+            style={{ width: '100%', margin: 0, background: '#d4af37', color: '#000', fontWeight: 'bold' }}
+          >
+            {isGenerating ? `${t('studio.generating')} ${generateProgress}%` : t('studio.generateReport')}
+            {isGenerating && (
+              <div style={{ width: '100%', height: '4px', background: 'rgba(0,0,0,0.2)', marginTop: '8px', borderRadius: '2px', overflow: 'hidden' }}>
+                <div style={{ width: `${generateProgress}%`, height: '100%', background: '#000', transition: 'width 0.2s' }} />
+              </div>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Main 2D Interactive Ceiling Blueprint */}
       <div className={styles.canvasContainer}>
-        {/* Unit toggle */}
-        <div style={{
-          position: 'absolute', top: '1rem', right: '1rem', zIndex: 20,
-          display: 'flex', gap: '0.25rem', background: 'rgba(13,27,42,0.9)', padding: '4px', borderRadius: '6px', border: '1px solid rgba(212,175,55,0.3)'
-        }}>
-          <button onClick={() => setRulerUnit('ft')} style={{
-            padding: '4px 12px', fontSize: '0.75rem', fontFamily: 'monospace', borderRadius: '4px', border: 'none', cursor: 'pointer',
-            background: rulerUnit === 'ft' ? '#d4af37' : 'transparent', color: rulerUnit === 'ft' ? '#000' : '#888'
-          }}>ft/in</button>
-          <button onClick={() => setRulerUnit('m')} style={{
-            padding: '4px 12px', fontSize: '0.75rem', fontFamily: 'monospace', borderRadius: '4px', border: 'none', cursor: 'pointer',
-            background: rulerUnit === 'm' ? '#d4af37' : 'transparent', color: rulerUnit === 'm' ? '#000' : '#888'
-          }}>m</button>
-        </div>
-
         <CeilingGrid 
           dimensions={dimensions}
           placedLights={placedLights}
@@ -980,19 +1006,6 @@ export default function StudioClient() {
           onSelectLight={setSelectedLightId}
           rulerUnit={rulerUnit}
         />
-        
-        <button 
-          className={styles.floatingButton} 
-          onClick={handleGenerateReportClick}
-          disabled={isGenerating}
-        >
-          {isGenerating ? `${t('studio.generating')} ${generateProgress}%` : t('studio.generateReport')}
-          {isGenerating && (
-            <div style={{ width: '100%', height: '4px', background: '#333', marginTop: '8px', borderRadius: '2px', overflow: 'hidden' }}>
-              <div style={{ width: `${generateProgress}%`, height: '100%', background: '#d4af37', transition: 'width 0.2s' }} />
-            </div>
-          )}
-        </button>
       </div>
 
       {/* Hidden 3D Environment for Render & Light Calculation */}
