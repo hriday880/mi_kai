@@ -146,7 +146,6 @@ body {
   color: var(--text-primary);
   background-color: var(--bg-primary);
   min-height: 100vh;
-  overflow-x: hidden;
   letter-spacing: 0.02em;
 }
 
